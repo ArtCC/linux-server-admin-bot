@@ -181,7 +181,6 @@ linux-server-admin-bot/
 | `RATE_LIMIT_CALLS` | Max calls per period | ❌ No | 10 |
 | `RATE_LIMIT_PERIOD` | Rate limit period (seconds) | ❌ No | 60 |
 | `LOG_LEVEL` | Logging level | ❌ No | INFO |
-| `BOT_DOCKER_HOST` | Docker socket path | ❌ No | unix:///var/run/docker.sock |
 
 ### Docker Volumes
 
@@ -310,6 +309,6 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 Made with ❤️ for system administrators
 
 <p align="left">
-  <sub>100% built with GitHub Copilot (Claude Sonnet 4.5)</sub><br>
+  <sub>100% built with GitHub Copilot (Claude Opus 4.5)</sub><br>
   <sub>Arturo Carretero Calvo — 2026</sub>
 </p>

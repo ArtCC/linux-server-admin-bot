@@ -33,7 +33,8 @@ services:
       - RATE_LIMIT_CALLS=${RATE_LIMIT_CALLS:-10}
       - RATE_LIMIT_PERIOD=${RATE_LIMIT_PERIOD:-60}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
-      - BOT_DOCKER_HOST=${BOT_DOCKER_HOST:-unix:///var/run/docker.sock}
+      # Override Portainer's DOCKER_HOST to use socket directly
+      - DOCKER_HOST=unix:///var/run/docker.sock
     
     # Volumes for monitoring host system
     volumes:
