@@ -1,5 +1,9 @@
 # 🤖 Linux Server Admin Bot
 
+<p align="center">
+  <img src="https://github.com/ArtCC/linux-server-admin-bot/blob/main/assets/linux-server-admin-bot.png" alt="Linux Server Admin Bot" width="300"/>
+</p>
+
 [![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](Dockerfile)
@@ -182,6 +186,23 @@ volumes:
   - /sys:/host/sys:ro                              # System information
   - /var/log:/host/logs:ro                         # System logs (optional)
 ```
+
+## 🎨 Bot Avatar
+
+You can use the official bot avatar for your own instance:
+
+<p align="center">
+  <img src="https://github.com/ArtCC/linux-server-admin-bot/blob/main/assets/linux-server-admin-bot.png" alt="Bot Avatar" width="200"/>
+</p>
+
+**Download**: [linux-server-admin-bot.png](https://github.com/ArtCC/linux-server-admin-bot/blob/main/assets/linux-server-admin-bot.png)
+
+To set this image as your bot's profile picture:
+1. Download the image from the link above
+2. Open [@BotFather](https://t.me/botfather) on Telegram
+3. Send `/setuserpic`
+4. Select your bot
+5. Upload the downloaded image
 
 ## 🧪 Development
 
