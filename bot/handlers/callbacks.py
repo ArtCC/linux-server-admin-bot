@@ -372,11 +372,23 @@ class CallbackHandlers:
         try:
             # Execute reboot command on host using nsenter
             # nsenter -t 1 enters the namespace of PID 1 (init/systemd on host)
-            subprocess.Popen(
-                ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "--", "shutdown", "-r", "now"],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
+            result = subprocess.run(
+                ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "--", "reboot"],
+                capture_output=True,
+                text=True,
+                timeout=10
             )
+            if result.returncode != 0:
+                logger.error(f"Reboot command failed: {result.stderr}")
+                await query.edit_message_text(
+                    f"{EMOJI['error']} *Reboot Failed*\n\n"
+                    f"Error: {escape_markdown(result.stderr or 'Unknown error')}",
+                    parse_mode="MarkdownV2",
+                    reply_markup=get_power_menu_keyboard()
+                )
+        except subprocess.TimeoutExpired:
+            # Timeout is expected if reboot starts immediately
+            logger.info("Reboot command timed out - this is expected if reboot started")
         except Exception as e:
             logger.error(f"Failed to execute reboot: {e}")
             await query.edit_message_text(
@@ -401,11 +413,23 @@ class CallbackHandlers:
         try:
             # Execute shutdown command on host using nsenter
             # nsenter -t 1 enters the namespace of PID 1 (init/systemd on host)
-            subprocess.Popen(
-                ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "--", "shutdown", "-h", "now"],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
+            result = subprocess.run(
+                ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "--", "poweroff"],
+                capture_output=True,
+                text=True,
+                timeout=10
             )
+            if result.returncode != 0:
+                logger.error(f"Shutdown command failed: {result.stderr}")
+                await query.edit_message_text(
+                    f"{EMOJI['error']} *Shutdown Failed*\n\n"
+                    f"Error: {escape_markdown(result.stderr or 'Unknown error')}",
+                    parse_mode="MarkdownV2",
+                    reply_markup=get_power_menu_keyboard()
+                )
+        except subprocess.TimeoutExpired:
+            # Timeout is expected if shutdown starts immediately
+            logger.info("Shutdown command timed out - this is expected if shutdown started")
         except Exception as e:
             logger.error(f"Failed to execute shutdown: {e}")
             await query.edit_message_text(

@@ -50,10 +50,6 @@ services:
     privileged: true
     pid: host
     
-    # Security options
-    security_opt:
-      - no-new-privileges:true
-    
     # Resource limits (adjust as needed)
     deploy:
       resources:
