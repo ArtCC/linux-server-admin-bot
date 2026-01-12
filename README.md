@@ -193,8 +193,24 @@ The bot requires access to host system resources:
 ```yaml
 volumes:
   - /proc:/host/proc:ro # System metrics
-  - /sys:/host/sys:ro.  # System information
+  - /sys:/host/sys:ro   # System information
 ```
+
+### Power Control (Reboot/Shutdown)
+
+For the power control features to work, the container needs special privileges:
+
+```yaml
+privileged: true # Required for nsenter
+pid: host        # Access to host PID namespace
+```
+
+⚠️ **Security Note**: These options give the container elevated access to the host. This is required because the bot needs to execute `shutdown` commands on the host system, not inside the container. The bot uses `nsenter` to enter the host's namespace and execute power commands.
+
+**How it works:**
+- The container runs with access to the host's PID namespace
+- When reboot/shutdown is triggered, `nsenter -t 1` enters PID 1's namespace (init/systemd)
+- The `shutdown` command is then executed on the host
 
 ## 🎨 Bot Avatar
 

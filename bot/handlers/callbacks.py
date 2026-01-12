@@ -370,9 +370,10 @@ class CallbackHandlers:
         )
         
         try:
-            # Execute reboot command
+            # Execute reboot command on host using nsenter
+            # nsenter -t 1 enters the namespace of PID 1 (init/systemd on host)
             subprocess.Popen(
-                ["sudo", "shutdown", "-r", "now"],
+                ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "--", "shutdown", "-r", "now"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL
             )
@@ -398,9 +399,10 @@ class CallbackHandlers:
         )
         
         try:
-            # Execute shutdown command
+            # Execute shutdown command on host using nsenter
+            # nsenter -t 1 enters the namespace of PID 1 (init/systemd on host)
             subprocess.Popen(
-                ["sudo", "shutdown", "-h", "now"],
+                ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "--", "shutdown", "-h", "now"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL
             )
