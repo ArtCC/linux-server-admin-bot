@@ -153,7 +153,7 @@ docs/            # Additional documentation
 
 **Examples:**
 ```
-feat(power): add server reboot command
+feat(monitor): add network bandwidth monitoring
 fix(alerts): prevent duplicate alert notifications
 docs(readme): update installation instructions
 ```

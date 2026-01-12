@@ -35,7 +35,6 @@ strict_equality = true
 
 [[tool.mypy.overrides]]
 module = [
-    "docker.*",
     "matplotlib.*",
     "seaborn.*",
     "psutil.*",
@@ -53,7 +52,7 @@ asyncio_mode = "auto"
 [project]
 name = "linux-server-admin-bot"
 version = "1.0.0"
-description = "Telegram bot for Ubuntu server monitoring and Docker management"
+description = "Telegram bot for Ubuntu server monitoring and system administration"
 authors = [{name = "Your Name", email = "your.email@example.com"}]
 readme = "README.md"
 requires-python = ">=3.11"
