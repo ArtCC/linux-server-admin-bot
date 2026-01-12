@@ -1,8 +1,19 @@
 """
 System monitoring service using psutil.
 """
+import os
 from datetime import datetime
 from typing import List, Optional
+
+# Configure psutil to use host's /proc and /sys if mounted
+# This must be done BEFORE importing psutil
+_host_proc = os.environ.get("HOST_PROC_PATH", "/host/proc")
+_host_sys = os.environ.get("HOST_SYS_PATH", "/host/sys")
+
+if os.path.exists(_host_proc):
+    os.environ["PSUTIL_PROCFS_PATH"] = _host_proc
+if os.path.exists(_host_sys):
+    os.environ["PSUTIL_SYSFS_PATH"] = _host_sys
 
 import psutil
 
@@ -10,6 +21,12 @@ from bot.models import CPUMetrics, DiskMetrics, MemoryMetrics, NetworkMetrics, P
 from config import get_logger
 
 logger = get_logger(__name__)
+
+# Log which paths are being used
+if os.path.exists(_host_proc):
+    logger.info(f"Using host /proc: {_host_proc}")
+else:
+    logger.info("Using container /proc (host not mounted)")
 
 
 class SystemMonitor:
@@ -20,12 +37,12 @@ class SystemMonitor:
         Initialize system monitor.
 
         Args:
-            proc_path: Path to /proc directory
-            sys_path: Path to /sys directory
+            proc_path: Path to /proc directory (legacy, now uses env vars)
+            sys_path: Path to /sys directory (legacy, now uses env vars)
         """
-        self.proc_path = proc_path
-        self.sys_path = sys_path
-        logger.info("SystemMonitor initialized")
+        self.proc_path = _host_proc if os.path.exists(_host_proc) else proc_path
+        self.sys_path = _host_sys if os.path.exists(_host_sys) else sys_path
+        logger.info(f"SystemMonitor initialized (proc={self.proc_path}, sys={self.sys_path})")
 
     def get_cpu_metrics(self, interval: float = 1.0) -> CPUMetrics:
         """

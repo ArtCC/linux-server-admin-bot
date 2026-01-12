@@ -20,6 +20,7 @@ import signal
 import sys
 from typing import Optional
 
+from telegram import BotCommand
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler
 
 from bot.handlers import BasicHandlers, CallbackHandlers, DockerHandlers, SystemHandlers
@@ -152,9 +153,32 @@ class BotApplication:
         # Start bot
         await self.app.initialize()
         await self.app.start()
+        
+        # Set bot commands menu (appears when user types "/" or clicks menu button)
+        await self._set_bot_commands()
+        
         await self.app.updater.start_polling(drop_pending_updates=True)
 
         logger.info("Bot is running! Press Ctrl+C to stop.")
+
+    async def _set_bot_commands(self) -> None:
+        """Set the bot commands menu visible in Telegram."""
+        commands = [
+            BotCommand("start", "🚀 Menú principal"),
+            BotCommand("status", "📊 Estado del sistema"),
+            BotCommand("cpu", "🖥️ Información de CPU"),
+            BotCommand("memory", "💾 Uso de memoria"),
+            BotCommand("disk", "💿 Uso de disco"),
+            BotCommand("network", "🌐 Estadísticas de red"),
+            BotCommand("top", "📈 Procesos top"),
+            BotCommand("docker", "🐳 Listar contenedores"),
+            BotCommand("docker_stats", "📦 Stats de contenedores"),
+            BotCommand("alerts", "🔔 Configuración de alertas"),
+            BotCommand("help", "❓ Ayuda"),
+        ]
+        
+        await self.app.bot.set_my_commands(commands)
+        logger.info("Bot commands menu configured")
 
     async def stop(self) -> None:
         """Stop the bot application gracefully."""

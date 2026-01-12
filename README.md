@@ -140,34 +140,34 @@ Just type `/start` to see the interactive menu!
 ```
 linux-server-admin-bot/
 ├── bot/
-│   ├── handlers/          # Command handlers
-│   │   ├── basic.py       # Start, help, alerts
-│   │   ├── system.py      # System monitoring commands
-│   │   ├── docker.py      # Docker management commands
-│   │   └── callbacks.py   # Inline keyboard callbacks
-│   ├── services/          # Business logic
+│   ├── handlers/                # Command handlers
+│   │   ├── basic.py             # Start, help, alerts
+│   │   ├── system.py            # System monitoring commands
+│   │   ├── docker.py            # Docker management commands
+│   │   └── callbacks.py         # Inline keyboard callbacks
+│   ├── services/                # Business logic
 │   │   ├── system_monitor.py    # psutil wrapper
 │   │   ├── docker_manager.py    # Docker SDK wrapper
 │   │   └── alert_manager.py     # Alert system
-│   ├── monitors/          # Background tasks
+│   ├── monitors/                # Background tasks
 │   │   └── health_monitor.py    # Periodic health checks
-│   ├── models/            # Data models
-│   │   └── metrics.py     # Dataclasses for metrics
-│   └── utils/             # Utilities
-│       ├── decorators.py  # Auth, rate limiting, logging
-│       ├── formatters.py  # Message formatting
-│       ├── keyboards.py   # Inline keyboard layouts
-│       └── charts.py      # Chart generation
-├── config/                # Configuration
-│   ├── settings.py        # Pydantic settings
-│   ├── constants.py       # Constants and enums
-│   └── logger.py          # Logging setup
-├── tests/                 # Unit tests
-├── docs/                  # Documentation
-├── main.py                # Application entry point
-├── Dockerfile             # Multi-stage Docker build
-├── docker-compose.yml     # Docker Compose config
-└── requirements.txt       # Python dependencies
+│   ├── models/                  # Data models
+│   │   └── metrics.py           # Dataclasses for metrics
+│   └── utils/                   # Utilities
+│       ├── decorators.py        # Auth, rate limiting, logging
+│       ├── formatters.py        # Message formatting
+│       ├── keyboards.py         # Inline keyboard layouts
+│       └── charts.py            # Chart generation
+├── config/                      # Configuration
+│   ├── settings.py              # Pydantic settings
+│   ├── constants.py             # Constants and enums
+│   └── logger.py                # Logging setup
+├── tests/                       # Unit tests
+├── docs/                        # Documentation
+├── main.py                      # Application entry point
+├── Dockerfile                   # Multi-stage Docker build
+├── docker-compose.yml           # Docker Compose config
+└── requirements.txt             # Python dependencies
 ```
 
 ### Design Principles
