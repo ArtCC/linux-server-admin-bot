@@ -7,6 +7,7 @@ from telegram.ext import ContextTypes
 from bot.services import SystemMonitor
 from bot.utils import (
     chart_generator,
+    escape_markdown,
     format_cpu_metrics,
     format_disk_metrics,
     format_memory_metrics,
@@ -189,10 +190,11 @@ class SystemHandlers:
                 if net.interface == "lo":
                     continue
 
+                interface_name = escape_markdown(net.interface)
                 message += (
-                    f"*{net.interface}*\n"
-                    f"└ RX: {net.bytes_recv_mb:.2f} MB\n"
-                    f"└ TX: {net.bytes_sent_mb:.2f} MB\n"
+                    f"*{interface_name}*\n"
+                    f"└ RX: {escape_markdown(f'{net.bytes_recv_mb:.2f}')} MB\n"
+                    f"└ TX: {escape_markdown(f'{net.bytes_sent_mb:.2f}')} MB\n"
                     f"└ Packets: {net.packets_recv} / {net.packets_sent}\n"
                     f"└ Errors: {net.errors_in} / {net.errors_out}\n\n"
                 )

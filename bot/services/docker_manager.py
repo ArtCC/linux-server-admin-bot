@@ -87,7 +87,11 @@ class DockerManager:
             # Calculate CPU percentage
             cpu_delta = stats["cpu_stats"]["cpu_usage"]["total_usage"] - stats["precpu_stats"]["cpu_usage"]["total_usage"]
             system_delta = stats["cpu_stats"]["system_cpu_usage"] - stats["precpu_stats"]["system_cpu_usage"]
-            cpu_percent = (cpu_delta / system_delta) * len(stats["cpu_stats"]["cpu_usage"]["percpu_usage"]) * 100.0 if system_delta > 0 else 0.0
+            
+            # Handle percpu_usage being None or missing
+            percpu_usage = stats["cpu_stats"]["cpu_usage"].get("percpu_usage")
+            num_cpus = len(percpu_usage) if percpu_usage else stats["cpu_stats"].get("online_cpus", 1)
+            cpu_percent = (cpu_delta / system_delta) * num_cpus * 100.0 if system_delta > 0 else 0.0
 
             # Memory stats
             memory_usage = stats["memory_stats"].get("usage", 0)
@@ -100,9 +104,9 @@ class DockerManager:
             network_tx = sum(net.get("tx_bytes", 0) for net in networks.values()) / (1024 * 1024)
 
             # Block I/O stats
-            blkio_stats = stats.get("blkio_stats", {}).get("io_service_bytes_recursive", [])
-            block_read = sum(item["value"] for item in blkio_stats if item["op"] == "Read") / (1024 * 1024) if blkio_stats else 0
-            block_write = sum(item["value"] for item in blkio_stats if item["op"] == "Write") / (1024 * 1024) if blkio_stats else 0
+            blkio_stats = stats.get("blkio_stats", {}).get("io_service_bytes_recursive") or []
+            block_read = sum(item.get("value", 0) for item in blkio_stats if item.get("op") == "Read") / (1024 * 1024) if blkio_stats else 0
+            block_write = sum(item.get("value", 0) for item in blkio_stats if item.get("op") == "Write") / (1024 * 1024) if blkio_stats else 0
 
             return DockerContainerStats(
                 container_id=container.short_id,

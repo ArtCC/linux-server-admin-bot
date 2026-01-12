@@ -56,7 +56,7 @@ class BotApplication:
             sys_path=settings.host_sys_path,
         )
 
-        self.docker_manager = DockerManager(docker_host=settings.docker_host)
+        self.docker_manager = DockerManager(docker_host=settings.bot_docker_host)
 
         self.alert_manager = AlertManager(
             cpu_threshold=settings.cpu_alert_threshold,

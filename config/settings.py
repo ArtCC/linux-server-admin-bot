@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     log_file: str = Field(default="logs/bot.log", description="Log file path")
 
     # Docker Settings
-    docker_host: str = Field(
+    bot_docker_host: str = Field(
         default="unix:///var/run/docker.sock", description="Docker host socket"
     )
 

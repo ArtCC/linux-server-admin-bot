@@ -181,6 +181,7 @@ linux-server-admin-bot/
 | `RATE_LIMIT_CALLS` | Max calls per period | ❌ No | 10 |
 | `RATE_LIMIT_PERIOD` | Rate limit period (seconds) | ❌ No | 60 |
 | `LOG_LEVEL` | Logging level | ❌ No | INFO |
+| `BOT_DOCKER_HOST` | Docker socket path | ❌ No | unix:///var/run/docker.sock |
 
 ### Docker Volumes
 

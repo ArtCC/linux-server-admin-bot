@@ -16,9 +16,6 @@ Pillow==10.2.0
 # Scheduling
 APScheduler==3.10.4
 
-# Async utilities
-aiofiles==23.2.1
-
 # Type checking
 pydantic==2.6.1
 pydantic-settings==2.1.0
