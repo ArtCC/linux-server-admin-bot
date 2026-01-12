@@ -10,19 +10,7 @@ class AlertType(str, Enum):
     CPU = "cpu"
     MEMORY = "memory"
     DISK = "disk"
-    DOCKER = "docker"
     CUSTOM = "custom"
-
-
-class ContainerStatus(str, Enum):
-    """Docker container statuses."""
-
-    RUNNING = "running"
-    STOPPED = "stopped"
-    PAUSED = "paused"
-    RESTARTING = "restarting"
-    EXITED = "exited"
-    DEAD = "dead"
 
 
 class ChartType(str, Enum):
@@ -40,8 +28,6 @@ EMOJI = {
     "memory": "💾",
     "disk": "💿",
     "network": "🌐",
-    "docker": "🐳",
-    "container": "📦",
     "warning": "⚠️",
     "error": "❌",
     "success": "✅",
@@ -63,9 +49,6 @@ EMOJI = {
     "process": "⚙️",
     "settings": "⚙️",
     "refresh": "🔄",
-    "play": "▶️",
-    "stop": "⏹️",
-    "logs": "📋",
 }
 
 # Command descriptions for bot menu
@@ -77,14 +60,8 @@ COMMANDS = {
     "/memory": "Información detallada de memoria RAM",
     "/disk": "Información de uso de disco",
     "/top": "Procesos top por uso de CPU",
-    "/docker": "Listar contenedores Docker",
-    "/docker_stats": "Estadísticas de recursos por contenedor",
-    "/docker_logs": "Ver logs de un contenedor",
-    "/docker_restart": "Reiniciar un contenedor",
-    "/docker_stop": "Detener un contenedor",
-    "/docker_start": "Iniciar un contenedor",
     "/alerts": "Ver configuración de alertas",
-    "/network": "Información de red y puertos abiertos",
+    "/network": "Información de red",
 }
 
 # System metrics refresh rates (seconds)

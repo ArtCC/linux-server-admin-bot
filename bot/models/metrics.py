@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from config.constants import AlertType, ContainerStatus
+from config.constants import AlertType
 
 
 @dataclass
@@ -116,42 +116,6 @@ class ProcessInfo:
     status: str
     username: str = ""
     create_time: Optional[datetime] = None
-
-
-@dataclass
-class DockerContainerInfo:
-    """Docker container information."""
-
-    id: str
-    name: str
-    image: str
-    status: ContainerStatus
-    state: str
-    created: datetime
-    ports: Dict[str, List[Dict[str, str]]] = field(default_factory=dict)
-    labels: Dict[str, str] = field(default_factory=dict)
-
-    @property
-    def short_id(self) -> str:
-        """Get short container ID."""
-        return self.id[:12]
-
-
-@dataclass
-class DockerContainerStats:
-    """Docker container resource usage statistics."""
-
-    container_id: str
-    container_name: str
-    cpu_percent: float
-    memory_usage_mb: float
-    memory_limit_mb: float
-    memory_percent: float
-    network_rx_mb: float
-    network_tx_mb: float
-    block_read_mb: float
-    block_write_mb: float
-    timestamp: datetime = field(default_factory=datetime.now)
 
 
 @dataclass

@@ -35,13 +35,9 @@ services:
     
     # Volumes for monitoring host system
     volumes:
-      # Docker socket for container management
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      
       # Host system metrics
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
-      - /var/log:/host/logs:ro
       
       # Bot logs (persistent)
       - ./logs:/app/logs

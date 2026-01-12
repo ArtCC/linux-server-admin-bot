@@ -3,8 +3,6 @@ from bot.models.metrics import (
     Alert,
     CPUMetrics,
     DiskMetrics,
-    DockerContainerInfo,
-    DockerContainerStats,
     MemoryMetrics,
     NetworkMetrics,
     ProcessInfo,
@@ -17,8 +15,6 @@ __all__ = [
     "DiskMetrics",
     "NetworkMetrics",
     "ProcessInfo",
-    "DockerContainerInfo",
-    "DockerContainerStats",
     "Alert",
     "SystemStatus",
 ]

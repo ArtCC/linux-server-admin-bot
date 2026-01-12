@@ -20,12 +20,7 @@ limitations under the License.
 # =============================================================================
 import os
 
-# 1. Clear DOCKER_HOST (Portainer injects http+docker:// which breaks docker-py)
-_docker_host = os.environ.pop("DOCKER_HOST", None)
-if _docker_host:
-    print(f"[ENV] Cleared DOCKER_HOST={_docker_host}")
-
-# 2. Configure psutil to use host's /proc and /sys
+# Configure psutil to use host's /proc and /sys
 _host_proc = os.environ.get("HOST_PROC_PATH", "/host/proc")
 _host_sys = os.environ.get("HOST_SYS_PATH", "/host/sys")
 
@@ -48,9 +43,9 @@ from typing import Optional
 from telegram import BotCommand
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler
 
-from bot.handlers import BasicHandlers, CallbackHandlers, DockerHandlers, SystemHandlers
+from bot.handlers import BasicHandlers, CallbackHandlers, SystemHandlers
 from bot.monitors import HealthMonitor
-from bot.services import AlertManager, DockerManager, SystemMonitor
+from bot.services import AlertManager, SystemMonitor
 from config import get_logger, settings, setup_logging
 
 logger = get_logger(__name__)
@@ -63,14 +58,12 @@ class BotApplication:
         """Initialize bot application."""
         self.app: Optional[Application] = None
         self.system_monitor: Optional[SystemMonitor] = None
-        self.docker_manager: Optional[DockerManager] = None
         self.alert_manager: Optional[AlertManager] = None
         self.health_monitor: Optional[HealthMonitor] = None
         
         # Handlers
         self.basic_handlers: Optional[BasicHandlers] = None
         self.system_handlers: Optional[SystemHandlers] = None
-        self.docker_handlers: Optional[DockerHandlers] = None
         self.callback_handlers: Optional[CallbackHandlers] = None
 
     async def initialize(self) -> None:
@@ -82,14 +75,6 @@ class BotApplication:
             proc_path=settings.host_proc_path,
             sys_path=settings.host_sys_path,
         )
-
-        # Try to initialize Docker (optional - bot works without it)
-        try:
-            self.docker_manager = DockerManager()
-            logger.info("Docker support enabled")
-        except Exception as e:
-            logger.warning(f"Docker not available: {e}. Docker commands will be disabled.")
-            self.docker_manager = None
 
         self.alert_manager = AlertManager(
             cpu_threshold=settings.cpu_alert_threshold,
@@ -105,15 +90,10 @@ class BotApplication:
         self.basic_handlers = BasicHandlers(self.alert_manager)
         self.system_handlers = SystemHandlers(self.system_monitor)
         
-        # Docker handlers only if Docker is available
-        if self.docker_manager:
-            self.docker_handlers = DockerHandlers(self.docker_manager)
-
         # Callback handlers for inline keyboard buttons
         self.callback_handlers = CallbackHandlers(
             system_monitor=self.system_monitor,
             alert_manager=self.alert_manager,
-            docker_manager=self.docker_manager,
         )
 
         # Register command handlers
@@ -145,18 +125,6 @@ class BotApplication:
         self.app.add_handler(CommandHandler("disk", self.system_handlers.disk_command))
         self.app.add_handler(CommandHandler("top", self.system_handlers.top_command))
         self.app.add_handler(CommandHandler("network", self.system_handlers.network_command))
-
-        # Docker commands (only if Docker is available)
-        if self.docker_handlers:
-            self.app.add_handler(CommandHandler("docker", self.docker_handlers.docker_command))
-            self.app.add_handler(CommandHandler("docker_stats", self.docker_handlers.docker_stats_command))
-            self.app.add_handler(CommandHandler("docker_logs", self.docker_handlers.docker_logs_command))
-            self.app.add_handler(CommandHandler("docker_restart", self.docker_handlers.docker_restart_command))
-            self.app.add_handler(CommandHandler("docker_stop", self.docker_handlers.docker_stop_command))
-            self.app.add_handler(CommandHandler("docker_start", self.docker_handlers.docker_start_command))
-            logger.info("Docker commands registered")
-        else:
-            logger.warning("Docker commands not registered (Docker unavailable)")
 
         # Callback query handler for inline keyboard buttons
         self.app.add_handler(CallbackQueryHandler(self.callback_handlers.handle_callback))
@@ -196,8 +164,6 @@ class BotApplication:
             BotCommand("disk", "💿 Uso de disco"),
             BotCommand("network", "🌐 Estadísticas de red"),
             BotCommand("top", "📈 Procesos top"),
-            BotCommand("docker", "🐳 Listar contenedores"),
-            BotCommand("docker_stats", "📦 Stats de contenedores"),
             BotCommand("alerts", "🔔 Configuración de alertas"),
             BotCommand("help", "❓ Ayuda"),
         ]
@@ -218,10 +184,6 @@ class BotApplication:
             await self.app.updater.stop()
             await self.app.stop()
             await self.app.shutdown()
-
-        # Close Docker client
-        if self.docker_manager:
-            self.docker_manager.close()
 
         logger.info("Bot application stopped")
 

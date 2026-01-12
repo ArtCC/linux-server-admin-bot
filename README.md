@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](Dockerfile)
 
-Telegram bot for monitoring and managing Ubuntu servers with Docker support. Monitor system resources, manage Docker containers, and receive automated alerts - all from Telegram.
+Telegram bot for monitoring Ubuntu servers. Monitor system resources and receive automated alerts - all from Telegram.
 
 ## ✨ Features
 
@@ -18,21 +18,13 @@ Telegram bot for monitoring and managing Ubuntu servers with Docker support. Mon
 - **Disk**: Space usage across mount points
 - **Network**: Interface statistics, traffic monitoring
 - **Processes**: Top CPU-consuming processes
-- **Temperature**: System sensors (if available)
-
-### 🐳 Docker Management
-- List all containers with status
-- View resource usage per container
-- Start/Stop/Restart containers
-- View container logs
-- Real-time statistics with charts
 
 ### 📈 Visualizations
 - Beautiful matplotlib charts for all metrics
 - CPU usage per core
 - Memory distribution pie charts
 - Disk usage visualization
-- Docker container resource graphs
+- Process resource graphs
 
 ### 🔔 Automated Alerts
 - Configurable thresholds for CPU, RAM, and disk
@@ -44,7 +36,6 @@ Telegram bot for monitoring and managing Ubuntu servers with Docker support. Mon
 - User whitelist authentication
 - Rate limiting per user
 - Comprehensive logging
-- Docker security best practices
 
 ## 🚀 Quick Start
 
@@ -105,7 +96,6 @@ The bot features a **beautiful interactive menu** with inline keyboard buttons f
 
 - **Main Menu**: Access all features with a single tap
 - **System Monitoring**: CPU, Memory, Disk, Network, Processes
-- **Docker Menu**: Container management, logs, stats
 - **Quick Navigation**: Back buttons and menu shortcuts
 
 Just type `/start` to see the interactive menu!
@@ -124,14 +114,6 @@ Just type `/start` to see the interactive menu!
 - `/top` - Top processes by CPU usage
 - `/network` - Network interface statistics
 
-#### Docker Management
-- `/docker` - List all containers
-- `/docker_stats` - Resource usage per container
-- `/docker_logs <container>` - View container logs
-- `/docker_restart <container>` - Restart a container
-- `/docker_stop <container>` - Stop a container
-- `/docker_start <container>` - Start a container
-
 #### Alerts
 - `/alerts` - View alert configuration and active alerts
 
@@ -140,34 +122,32 @@ Just type `/start` to see the interactive menu!
 ```
 linux-server-admin-bot/
 ├── bot/
-│   ├── handlers/                # Command handlers
-│   │   ├── basic.py             # Start, help, alerts
-│   │   ├── system.py            # System monitoring commands
-│   │   ├── docker.py            # Docker management commands
-│   │   └── callbacks.py         # Inline keyboard callbacks
-│   ├── services/                # Business logic
-│   │   ├── system_monitor.py    # psutil wrapper
-│   │   ├── docker_manager.py    # Docker SDK wrapper
-│   │   └── alert_manager.py     # Alert system
-│   ├── monitors/                # Background tasks
-│   │   └── health_monitor.py    # Periodic health checks
-│   ├── models/                  # Data models
-│   │   └── metrics.py           # Dataclasses for metrics
-│   └── utils/                   # Utilities
-│       ├── decorators.py        # Auth, rate limiting, logging
-│       ├── formatters.py        # Message formatting
-│       ├── keyboards.py         # Inline keyboard layouts
-│       └── charts.py            # Chart generation
-├── config/                      # Configuration
-│   ├── settings.py              # Pydantic settings
-│   ├── constants.py             # Constants and enums
-│   └── logger.py                # Logging setup
-├── tests/                       # Unit tests
-├── docs/                        # Documentation
-├── main.py                      # Application entry point
-├── Dockerfile                   # Multi-stage Docker build
-├── docker-compose.yml           # Docker Compose config
-└── requirements.txt             # Python dependencies
+│   ├── handlers/             # Command handlers
+│   │   ├── basic.py          # Start, help, alerts
+│   │   ├── system.py         # System monitoring commands
+│   │   └── callbacks.py      # Inline keyboard callbacks
+│   ├── services/             # Business logic
+│   │   ├── system_monitor.py # psutil wrapper
+│   │   └── alert_manager.py  # Alert system
+│   ├── monitors/             # Background tasks
+│   │   └── health_monitor.py # Periodic health checks
+│   ├── models/               # Data models
+│   │   └── metrics.py        # Dataclasses for metrics
+│   └── utils/                # Utilities
+│       ├── decorators.py     # Auth, rate limiting, logging
+│       ├── formatters.py     # Message formatting
+│       ├── keyboards.py      # Inline keyboard layouts
+│       └── charts.py         # Chart generation
+├── config/                   # Configuration
+│   ├── settings.py           # Pydantic settings
+│   ├── constants.py          # Constants and enums
+│   └── logger.py             # Logging setup
+├── tests/                    # Unit tests
+├── docs/                     # Documentation
+├── main.py                   # Application entry point
+├── Dockerfile                # Multi-stage Docker build
+├── docker-compose.yml        # Docker Compose config
+└── requirements.txt          # Python dependencies
 ```
 
 ### Design Principles
@@ -201,10 +181,8 @@ The bot requires access to host system resources:
 
 ```yaml
 volumes:
-  - /var/run/docker.sock:/var/run/docker.sock:ro  # Docker management
-  - /proc:/host/proc:ro                           # System metrics
-  - /sys:/host/sys:ro                             # System information
-  - /var/log:/host/logs:ro                        # System logs (optional)
+  - /proc:/host/proc:ro # System metrics
+  - /sys:/host/sys:ro.  # System information
 ```
 
 ## 🎨 Bot Avatar
@@ -279,10 +257,6 @@ mypy bot/ config/
 - Verify bot token is correct
 - Ensure your user ID is in `TELEGRAM_ALLOWED_USER_IDS`
 
-### Docker permission errors
-- User must be in `docker` group: `sudo usermod -aG docker $USER`
-- Restart Docker service: `sudo systemctl restart docker`
-
 ### High memory usage
 - Adjust resource limits in `docker-compose.yml`
 - Increase alert check interval
@@ -306,7 +280,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) - Telegram Bot framework
 - [psutil](https://github.com/giampaolo/psutil) - System monitoring
-- [docker-py](https://github.com/docker/docker-py) - Docker SDK
 - [matplotlib](https://matplotlib.org/) - Visualization library
 
 ## 📧 Support

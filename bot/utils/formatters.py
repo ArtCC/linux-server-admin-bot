@@ -7,8 +7,6 @@ from typing import List, Optional
 from bot.models import (
     CPUMetrics,
     DiskMetrics,
-    DockerContainerInfo,
-    DockerContainerStats,
     MemoryMetrics,
     ProcessInfo,
     SystemStatus,
@@ -212,66 +210,6 @@ def format_top_processes(processes: List[ProcessInfo]) -> str:
             f"MEM: {escape_markdown(f'{proc.memory_mb:.0f}MB')} \\| "
             f"PID: {escape_markdown(str(proc.pid))}\n"
         )
-    
-    return message
-
-
-def format_docker_containers(containers: List[DockerContainerInfo]) -> str:
-    """
-    Format Docker containers list for Telegram message.
-
-    Args:
-        containers: List of container information
-
-    Returns:
-        Formatted message in MarkdownV2
-    """
-    if not containers:
-        return f"{EMOJI['info']} No containers found\\."
-    
-    message = f"*{EMOJI['docker']} Docker Containers* \\({len(containers)}\\)\n\n"
-    
-    for container in containers:
-        status_emoji = EMOJI["success"] if container.status.value == "running" else EMOJI["cross"]
-        
-        message += (
-            f"{status_emoji} *{escape_markdown(container.name)}*\n"
-            f"   Image: {escape_markdown(container.image[:40])}\n"
-            f"   Status: {escape_markdown(container.state)}\n"
-            f"   ID: `{escape_markdown(container.short_id)}`\n\n"
-        )
-    
-    return message
-
-
-def format_docker_stats(stats: DockerContainerStats) -> str:
-    """
-    Format Docker container stats for Telegram message.
-
-    Args:
-        stats: Container statistics
-
-    Returns:
-        Formatted message in MarkdownV2
-    """
-    cpu_bar = _create_progress_bar(stats.cpu_percent, 100, length=10)
-    mem_bar = _create_progress_bar(stats.memory_percent, 100, length=10)
-    
-    message = (
-        f"*{EMOJI['container']} {escape_markdown(stats.container_name)}*\n\n"
-        f"*CPU:* {escape_markdown(f'{stats.cpu_percent:.1f}%')}\n"
-        f"{escape_markdown(cpu_bar)}\n\n"
-        f"*Memory:* {escape_markdown(f'{stats.memory_percent:.1f}%')}\n"
-        f"{escape_markdown(mem_bar)}\n"
-        f"└ {escape_markdown(f'{stats.memory_usage_mb:.1f}MB')} / "
-        f"{escape_markdown(f'{stats.memory_limit_mb:.1f}MB')}\n\n"
-        f"*Network:*\n"
-        f"└ RX: {escape_markdown(f'{stats.network_rx_mb:.2f}MB')} \\| "
-        f"TX: {escape_markdown(f'{stats.network_tx_mb:.2f}MB')}\n\n"
-        f"*Disk I/O:*\n"
-        f"└ Read: {escape_markdown(f'{stats.block_read_mb:.2f}MB')} \\| "
-        f"Write: {escape_markdown(f'{stats.block_write_mb:.2f}MB')}\n"
-    )
     
     return message
 

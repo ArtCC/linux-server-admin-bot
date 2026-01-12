@@ -39,7 +39,7 @@ class BasicHandlers:
             f"Welcome, {escape_markdown(user.first_name)}\\!\n\n"
             f"━━━━━━━━━━━━━━━━━━━━━━━━\n"
             f"{EMOJI['server']} Monitor your Ubuntu server\n"
-            f"{EMOJI['docker']} Manage Docker containers\n"
+            f"{EMOJI['chart']} View system metrics\n"
             f"{EMOJI['warning']} Get real\\-time alerts\n"
             f"━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
             f"_Select an option below or use /help_"
@@ -65,7 +65,6 @@ class BasicHandlers:
         # Group commands by category
         basic_cmds = ["/start", "/help", "/status"]
         system_cmds = ["/cpu", "/memory", "/disk", "/top", "/network"]
-        docker_cmds = ["/docker", "/docker_stats", "/docker_logs", "/docker_restart", "/docker_stop", "/docker_start"]
         alert_cmds = ["/alerts"]
         
         help_text += "*Basic Commands:*\n"
@@ -75,11 +74,6 @@ class BasicHandlers:
         
         help_text += "\n*System Monitoring:*\n"
         for cmd in system_cmds:
-            if cmd in COMMANDS:
-                help_text += f"`{cmd}` \\- {escape_markdown(COMMANDS[cmd])}\n"
-        
-        help_text += "\n*Docker Management:*\n"
-        for cmd in docker_cmds:
             if cmd in COMMANDS:
                 help_text += f"`{cmd}` \\- {escape_markdown(COMMANDS[cmd])}\n"
         

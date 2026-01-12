@@ -13,19 +13,13 @@ from bot.utils.formatters import (
     format_bytes,
     format_cpu_metrics,
     format_disk_metrics,
-    format_docker_containers,
-    format_docker_stats,
     format_duration,
     format_memory_metrics,
     format_system_status,
     format_top_processes,
 )
 from bot.utils.keyboards import (
-    get_back_to_docker_keyboard,
     get_back_to_main_keyboard,
-    get_confirmation_keyboard,
-    get_container_action_keyboard,
-    get_docker_menu_keyboard,
     get_main_menu_keyboard,
 )
 
@@ -46,16 +40,10 @@ __all__ = [
     "format_memory_metrics",
     "format_disk_metrics",
     "format_top_processes",
-    "format_docker_containers",
-    "format_docker_stats",
     # Charts
     "ChartGenerator",
     "chart_generator",
     # Keyboards
     "get_main_menu_keyboard",
-    "get_docker_menu_keyboard",
-    "get_container_action_keyboard",
     "get_back_to_main_keyboard",
-    "get_back_to_docker_keyboard",
-    "get_confirmation_keyboard",
 ]
