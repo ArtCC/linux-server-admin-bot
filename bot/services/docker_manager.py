@@ -2,6 +2,11 @@
 Docker management service.
 """
 import os
+
+# IMPORTANT: Clear DOCKER_HOST before importing docker module
+# Portainer injects DOCKER_HOST=http+docker://... which is incompatible with docker-py
+_original_docker_host = os.environ.pop("DOCKER_HOST", None)
+
 from datetime import datetime
 from typing import Dict, List, Optional
 
@@ -15,6 +20,9 @@ from config.constants import ContainerStatus
 
 logger = get_logger(__name__)
 
+if _original_docker_host:
+    logger.warning(f"Cleared incompatible DOCKER_HOST={_original_docker_host}")
+
 # Docker socket path - always use local socket
 DOCKER_SOCKET = "unix:///var/run/docker.sock"
 
@@ -25,15 +33,13 @@ class DockerManager:
     def __init__(self) -> None:
         """
         Initialize Docker manager.
-        Always uses local Docker socket, ignoring any DOCKER_HOST env var.
+        Always uses local Docker socket.
         """
-        # Clear any DOCKER_HOST env var that might interfere (e.g., from Portainer)
-        os.environ.pop("DOCKER_HOST", None)
-        
         try:
+            # Explicitly create client with socket URL
             self.client = docker.DockerClient(base_url=DOCKER_SOCKET)
             self.client.ping()
-            logger.info(f"Docker client initialized: {DOCKER_SOCKET}")
+            logger.info(f"Docker client initialized successfully: {DOCKER_SOCKET}")
         except DockerException as e:
             logger.error(f"Failed to initialize Docker client: {e}")
             raise
