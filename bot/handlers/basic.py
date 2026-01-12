@@ -5,7 +5,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 
 from bot.services import AlertManager
-from bot.utils import escape_markdown, standard_handler
+from bot.utils import escape_markdown, get_main_menu_keyboard, standard_handler
 from config import COMMANDS, EMOJI, get_logger
 
 logger = get_logger(__name__)
@@ -26,7 +26,7 @@ class BasicHandlers:
     @standard_handler
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """
-        Handle /start command - welcome message.
+        Handle /start command - welcome message with menu.
 
         Args:
             update: Telegram update
@@ -37,11 +37,19 @@ class BasicHandlers:
         welcome_message = (
             f"{EMOJI['rocket']} *Linux Server Admin Bot*\n\n"
             f"Welcome, {escape_markdown(user.first_name)}\\!\n\n"
-            f"This bot helps you monitor and manage your Ubuntu server\\.\n\n"
-            f"Use /help to see available commands\\."
+            f"━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"{EMOJI['server']} Monitor your Ubuntu server\n"
+            f"{EMOJI['docker']} Manage Docker containers\n"
+            f"{EMOJI['warning']} Get real\\-time alerts\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"_Select an option below or use /help_"
         )
         
-        await update.message.reply_text(welcome_message, parse_mode="MarkdownV2")
+        await update.message.reply_text(
+            welcome_message,
+            parse_mode="MarkdownV2",
+            reply_markup=get_main_menu_keyboard()
+        )
 
     @standard_handler
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

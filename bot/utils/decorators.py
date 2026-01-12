@@ -31,8 +31,18 @@ def authorized_only(func: Callable) -> Callable:
     """
 
     @functools.wraps(func)
-    async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Optional[any]:
+    async def wrapper(*args, **kwargs) -> Optional[any]:
         """Check authorization before executing handler."""
+        # Handle both function and method calls
+        if len(args) >= 2 and hasattr(args[0], '__class__') and not isinstance(args[0], Update):
+            # Method call: (self, update, context)
+            update = args[1]
+            context = args[2] if len(args) > 2 else kwargs.get('context')
+        else:
+            # Function call: (update, context)
+            update = args[0]
+            context = args[1] if len(args) > 1 else kwargs.get('context')
+        
         user = update.effective_user
         if not user:
             logger.warning("Received update without user information")
@@ -51,7 +61,7 @@ def authorized_only(func: Callable) -> Callable:
             return None
 
         logger.info(f"Authorized user {user.id} ({user.username or user.first_name}) executing {func.__name__}")
-        return await func(update, context)
+        return await func(*args, **kwargs)
 
     return wrapper
 
@@ -70,8 +80,14 @@ def rate_limited(calls: int = 10, period: int = 60) -> Callable:
 
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
-        async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Optional[any]:
+        async def wrapper(*args, **kwargs) -> Optional[any]:
             """Check rate limit before executing handler."""
+            # Handle both function and method calls
+            if len(args) >= 2 and hasattr(args[0], '__class__') and not isinstance(args[0], Update):
+                update = args[1]
+            else:
+                update = args[0]
+            
             user = update.effective_user
             if not user:
                 return None
@@ -97,7 +113,7 @@ def rate_limited(calls: int = 10, period: int = 60) -> Callable:
             # Add current timestamp
             _rate_limit_storage[user_id].append(now)
 
-            return await func(update, context)
+            return await func(*args, **kwargs)
 
         return wrapper
 
@@ -116,8 +132,14 @@ def log_execution(func: Callable) -> Callable:
     """
 
     @functools.wraps(func)
-    async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Optional[any]:
+    async def wrapper(*args, **kwargs) -> Optional[any]:
         """Log execution time."""
+        # Handle both function and method calls
+        if len(args) >= 2 and hasattr(args[0], '__class__') and not isinstance(args[0], Update):
+            update = args[1]
+        else:
+            update = args[0]
+        
         user = update.effective_user
         user_info = f"{user.id} ({user.username or user.first_name})" if user else "Unknown"
 
@@ -125,7 +147,7 @@ def log_execution(func: Callable) -> Callable:
         logger.info(f"Handler {func.__name__} started by user {user_info}")
 
         try:
-            result = await func(update, context)
+            result = await func(*args, **kwargs)
             execution_time = time.time() - start_time
             logger.info(f"Handler {func.__name__} completed in {execution_time:.2f}s")
             return result
@@ -149,10 +171,16 @@ def error_handler(func: Callable) -> Callable:
     """
 
     @functools.wraps(func)
-    async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Optional[any]:
+    async def wrapper(*args, **kwargs) -> Optional[any]:
         """Handle errors gracefully."""
+        # Handle both function and method calls
+        if len(args) >= 2 and hasattr(args[0], '__class__') and not isinstance(args[0], Update):
+            update = args[1]
+        else:
+            update = args[0]
+        
         try:
-            return await func(update, context)
+            return await func(*args, **kwargs)
         except Exception as e:
             logger.error(f"Error in handler {func.__name__}: {e}", exc_info=True)
             
@@ -178,14 +206,22 @@ def typing_action(func: Callable) -> Callable:
     """
 
     @functools.wraps(func)
-    async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Optional[any]:
+    async def wrapper(*args, **kwargs) -> Optional[any]:
         """Send typing action."""
-        if update.effective_chat:
+        # Handle both function and method calls
+        if len(args) >= 2 and hasattr(args[0], '__class__') and not isinstance(args[0], Update):
+            update = args[1]
+            context = args[2] if len(args) > 2 else kwargs.get('context')
+        else:
+            update = args[0]
+            context = args[1] if len(args) > 1 else kwargs.get('context')
+        
+        if update.effective_chat and context:
             await context.bot.send_chat_action(
                 chat_id=update.effective_chat.id, action="typing"
             )
         
-        return await func(update, context)
+        return await func(*args, **kwargs)
 
     return wrapper
 

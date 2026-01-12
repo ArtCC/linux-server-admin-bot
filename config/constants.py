@@ -55,6 +55,16 @@ EMOJI = {
     "clock": "🕐",
     "lock": "🔒",
     "rocket": "🚀",
+    "back": "⬅️",
+    "home": "🏠",
+    "help": "❓",
+    "alert": "🔔",
+    "process": "⚙️",
+    "settings": "⚙️",
+    "refresh": "🔄",
+    "play": "▶️",
+    "stop": "⏹️",
+    "logs": "📋",
 }
 
 # Command descriptions for bot menu

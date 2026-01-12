@@ -20,6 +20,14 @@ from bot.utils.formatters import (
     format_system_status,
     format_top_processes,
 )
+from bot.utils.keyboards import (
+    get_back_to_docker_keyboard,
+    get_back_to_main_keyboard,
+    get_confirmation_keyboard,
+    get_container_action_keyboard,
+    get_docker_menu_keyboard,
+    get_main_menu_keyboard,
+)
 
 __all__ = [
     # Decorators
@@ -43,4 +51,11 @@ __all__ = [
     # Charts
     "ChartGenerator",
     "chart_generator",
+    # Keyboards
+    "get_main_menu_keyboard",
+    "get_docker_menu_keyboard",
+    "get_container_action_keyboard",
+    "get_back_to_main_keyboard",
+    "get_back_to_docker_keyboard",
+    "get_confirmation_keyboard",
 ]

@@ -99,10 +99,21 @@ docker-compose logs -f
 
 ## 📖 Usage
 
+### 🎨 Interactive Menu
+
+The bot features a **beautiful interactive menu** with inline keyboard buttons for easy navigation:
+
+- **Main Menu**: Access all features with a single tap
+- **System Monitoring**: CPU, Memory, Disk, Network, Processes
+- **Docker Menu**: Container management, logs, stats
+- **Quick Navigation**: Back buttons and menu shortcuts
+
+Just type `/start` to see the interactive menu!
+
 ### Available Commands
 
 #### Basic
-- `/start` - Welcome message and bot info
+- `/start` - Welcome message with interactive menu
 - `/help` - Show all available commands
 - `/status` - Overall system status summary
 
@@ -130,9 +141,10 @@ docker-compose logs -f
 linux-server-admin-bot/
 ├── bot/
 │   ├── handlers/          # Command handlers
-│   │   ├── basic.py      # Start, help, alerts
-│   │   ├── system.py     # System monitoring commands
-│   │   └── docker.py     # Docker management commands
+│   │   ├── basic.py       # Start, help, alerts
+│   │   ├── system.py      # System monitoring commands
+│   │   ├── docker.py      # Docker management commands
+│   │   └── callbacks.py   # Inline keyboard callbacks
 │   ├── services/          # Business logic
 │   │   ├── system_monitor.py    # psutil wrapper
 │   │   ├── docker_manager.py    # Docker SDK wrapper
@@ -140,21 +152,22 @@ linux-server-admin-bot/
 │   ├── monitors/          # Background tasks
 │   │   └── health_monitor.py    # Periodic health checks
 │   ├── models/            # Data models
-│   │   └── metrics.py    # Dataclasses for metrics
+│   │   └── metrics.py     # Dataclasses for metrics
 │   └── utils/             # Utilities
-│       ├── decorators.py # Auth, rate limiting, logging
-│       ├── formatters.py # Message formatting
-│       └── charts.py     # Chart generation
+│       ├── decorators.py  # Auth, rate limiting, logging
+│       ├── formatters.py  # Message formatting
+│       ├── keyboards.py   # Inline keyboard layouts
+│       └── charts.py      # Chart generation
 ├── config/                # Configuration
-│   ├── settings.py       # Pydantic settings
-│   ├── constants.py      # Constants and enums
-│   └── logger.py         # Logging setup
+│   ├── settings.py        # Pydantic settings
+│   ├── constants.py       # Constants and enums
+│   └── logger.py          # Logging setup
 ├── tests/                 # Unit tests
 ├── docs/                  # Documentation
-├── main.py               # Application entry point
-├── Dockerfile            # Multi-stage Docker build
-├── docker-compose.yml    # Docker Compose config
-└── requirements.txt      # Python dependencies
+├── main.py                # Application entry point
+├── Dockerfile             # Multi-stage Docker build
+├── docker-compose.yml     # Docker Compose config
+└── requirements.txt       # Python dependencies
 ```
 
 ### Design Principles
@@ -189,9 +202,9 @@ The bot requires access to host system resources:
 ```yaml
 volumes:
   - /var/run/docker.sock:/var/run/docker.sock:ro  # Docker management
-  - /proc:/host/proc:ro                            # System metrics
-  - /sys:/host/sys:ro                              # System information
-  - /var/log:/host/logs:ro                         # System logs (optional)
+  - /proc:/host/proc:ro                           # System metrics
+  - /sys:/host/sys:ro                             # System information
+  - /var/log:/host/logs:ro                        # System logs (optional)
 ```
 
 ## 🎨 Bot Avatar

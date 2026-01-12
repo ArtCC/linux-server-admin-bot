@@ -20,9 +20,9 @@ import signal
 import sys
 from typing import Optional
 
-from telegram.ext import Application, CommandHandler
+from telegram.ext import Application, CallbackQueryHandler, CommandHandler
 
-from bot.handlers import BasicHandlers, DockerHandlers, SystemHandlers
+from bot.handlers import BasicHandlers, CallbackHandlers, DockerHandlers, SystemHandlers
 from bot.monitors import HealthMonitor
 from bot.services import AlertManager, DockerManager, SystemMonitor
 from config import get_logger, settings, setup_logging
@@ -45,6 +45,7 @@ class BotApplication:
         self.basic_handlers: Optional[BasicHandlers] = None
         self.system_handlers: Optional[SystemHandlers] = None
         self.docker_handlers: Optional[DockerHandlers] = None
+        self.callback_handlers: Optional[CallbackHandlers] = None
 
     async def initialize(self) -> None:
         """Initialize all services and bot application."""
@@ -81,6 +82,13 @@ class BotApplication:
         # Docker handlers only if Docker is available
         if self.docker_manager:
             self.docker_handlers = DockerHandlers(self.docker_manager)
+
+        # Callback handlers for inline keyboard buttons
+        self.callback_handlers = CallbackHandlers(
+            system_monitor=self.system_monitor,
+            alert_manager=self.alert_manager,
+            docker_manager=self.docker_manager,
+        )
 
         # Register command handlers
         self._register_handlers()
@@ -123,6 +131,10 @@ class BotApplication:
             logger.info("Docker commands registered")
         else:
             logger.warning("Docker commands not registered (Docker unavailable)")
+
+        # Callback query handler for inline keyboard buttons
+        self.app.add_handler(CallbackQueryHandler(self.callback_handlers.handle_callback))
+        logger.info("Callback query handler registered")
 
         logger.info("All command handlers registered")
 
