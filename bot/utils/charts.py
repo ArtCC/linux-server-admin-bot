@@ -141,7 +141,7 @@ class ChartGenerator:
         plt.tight_layout()
         return self._fig_to_bytes(fig)
 
-    def generate_process_chart
+    def generate_process_chart(
         self,
         processes: List[Dict[str, any]],
         top_n: int = 10,
