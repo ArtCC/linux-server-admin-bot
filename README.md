@@ -1,7 +1,7 @@
 # 🤖 Linux Server Admin Bot
 
-<p align="center">
-  <img src="https://github.com/ArtCC/linux-server-admin-bot/blob/main/assets/linux-server-admin-bot.png" alt="Linux Server Admin Bot" width="300"/>
+<p align="left">
+  <img src="https://github.com/ArtCC/linux-server-admin-bot/blob/main/assets/linux-server-admin-bot.png" alt="Linux Server Admin Bot" width="175"/>
 </p>
 
 [![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
