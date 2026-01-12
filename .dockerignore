@@ -1,0 +1,16 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore environment file (sensitive data)
+.env
+
+# Ignore logs
+logs/
+
+# Ignore charts
+charts/
+
+# Development files
+.vscode/
+.idea/

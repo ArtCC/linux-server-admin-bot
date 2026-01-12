@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  linux-server-admin-bot:
+    # Use pre-built image from GitHub Container Registry
+    # Change 'yourusername' to your GitHub username
+    image: ghcr.io/artcc/linux-server-admin-bot:latest
+    
+    # Uncomment below to build locally instead of using registry image
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    
+    container_name: linux-server-admin-bot
+    restart: unless-stopped
+    
+    # Environment variables from .env file
+    env_file:
+      - .env
+    
+    # Volumes for monitoring host system
+    volumes:
+      # Docker socket for container management
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      
+      # Host system metrics
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/log:/host/logs:ro
+      
+      # Bot logs (persistent)
+      - ./logs:/app/logs
+    
+    # Use host network for better system monitoring
+    network_mode: host
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    
+    # Resource limits (adjust as needed)
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Optional: Use volumes for logs if you want them managed by Docker
+volumes:
+  bot_logs:
+    driver: local
