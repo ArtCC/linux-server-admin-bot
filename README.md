@@ -191,7 +191,7 @@ volumes:
 
 You can use the official bot avatar for your own instance:
 
-<p align="center">
+<p align="left">
   <img src="https://github.com/ArtCC/linux-server-admin-bot/blob/main/assets/linux-server-admin-bot.png" alt="Bot Avatar" width="200"/>
 </p>
 
@@ -272,10 +272,6 @@ mypy bot/ config/
 - Install `lm-sensors`: `sudo apt install lm-sensors`
 - Run sensor detection: `sudo sensors-detect`
 
-## 📝 License
-
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -297,6 +293,15 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 For support, open an issue on GitHub.
 
+## 📝 License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
 ---
 
 Made with ❤️ for system administrators
+
+<p align="left">
+  <sub>100% built with GitHub Copilot (Claude Sonnet 4.5)</sub><br>
+  <sub>Arturo Carretero Calvo — 2026</sub>
+</p>
