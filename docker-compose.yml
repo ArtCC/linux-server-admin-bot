@@ -3,7 +3,6 @@ version: '3.8'
 services:
   linux-server-admin-bot:
     # Use pre-built image from GitHub Container Registry
-    # Change 'yourusername' to your GitHub username
     image: ghcr.io/artcc/linux-server-admin-bot:latest
     
     # Uncomment below to build locally instead of using registry image

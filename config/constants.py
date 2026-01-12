@@ -55,6 +55,7 @@ EMOJI = {
     "clock": "🕐",
     "lock": "🔒",
     "rocket": "🚀",
+    "server": "🖥️",
     "back": "⬅️",
     "home": "🏠",
     "help": "❓",
