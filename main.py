@@ -56,7 +56,13 @@ class BotApplication:
             sys_path=settings.host_sys_path,
         )
 
-        self.docker_manager = DockerManager(docker_host=settings.bot_docker_host)
+        # Try to initialize Docker (optional - bot works without it)
+        try:
+            self.docker_manager = DockerManager()
+            logger.info("Docker support enabled")
+        except Exception as e:
+            logger.warning(f"Docker not available: {e}. Docker commands will be disabled.")
+            self.docker_manager = None
 
         self.alert_manager = AlertManager(
             cpu_threshold=settings.cpu_alert_threshold,
@@ -71,7 +77,10 @@ class BotApplication:
         # Initialize handlers
         self.basic_handlers = BasicHandlers(self.alert_manager)
         self.system_handlers = SystemHandlers(self.system_monitor)
-        self.docker_handlers = DockerHandlers(self.docker_manager)
+        
+        # Docker handlers only if Docker is available
+        if self.docker_manager:
+            self.docker_handlers = DockerHandlers(self.docker_manager)
 
         # Register command handlers
         self._register_handlers()
@@ -103,13 +112,17 @@ class BotApplication:
         self.app.add_handler(CommandHandler("top", self.system_handlers.top_command))
         self.app.add_handler(CommandHandler("network", self.system_handlers.network_command))
 
-        # Docker commands
-        self.app.add_handler(CommandHandler("docker", self.docker_handlers.docker_command))
-        self.app.add_handler(CommandHandler("docker_stats", self.docker_handlers.docker_stats_command))
-        self.app.add_handler(CommandHandler("docker_logs", self.docker_handlers.docker_logs_command))
-        self.app.add_handler(CommandHandler("docker_restart", self.docker_handlers.docker_restart_command))
-        self.app.add_handler(CommandHandler("docker_stop", self.docker_handlers.docker_stop_command))
-        self.app.add_handler(CommandHandler("docker_start", self.docker_handlers.docker_start_command))
+        # Docker commands (only if Docker is available)
+        if self.docker_handlers:
+            self.app.add_handler(CommandHandler("docker", self.docker_handlers.docker_command))
+            self.app.add_handler(CommandHandler("docker_stats", self.docker_handlers.docker_stats_command))
+            self.app.add_handler(CommandHandler("docker_logs", self.docker_handlers.docker_logs_command))
+            self.app.add_handler(CommandHandler("docker_restart", self.docker_handlers.docker_restart_command))
+            self.app.add_handler(CommandHandler("docker_stop", self.docker_handlers.docker_stop_command))
+            self.app.add_handler(CommandHandler("docker_start", self.docker_handlers.docker_start_command))
+            logger.info("Docker commands registered")
+        else:
+            logger.warning("Docker commands not registered (Docker unavailable)")
 
         logger.info("All command handlers registered")
 

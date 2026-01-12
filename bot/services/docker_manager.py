@@ -1,6 +1,7 @@
 """
 Docker management service.
 """
+import os
 from datetime import datetime
 from typing import Dict, List, Optional
 
@@ -14,21 +15,25 @@ from config.constants import ContainerStatus
 
 logger = get_logger(__name__)
 
+# Docker socket path - always use local socket
+DOCKER_SOCKET = "unix:///var/run/docker.sock"
+
 
 class DockerManager:
     """Service for managing Docker containers."""
 
-    def __init__(self, docker_host: str = "unix:///var/run/docker.sock") -> None:
+    def __init__(self) -> None:
         """
         Initialize Docker manager.
-
-        Args:
-            docker_host: Docker socket or host URL
+        Always uses local Docker socket, ignoring any DOCKER_HOST env var.
         """
+        # Clear any DOCKER_HOST env var that might interfere (e.g., from Portainer)
+        os.environ.pop("DOCKER_HOST", None)
+        
         try:
-            self.client = docker.DockerClient(base_url=docker_host)
+            self.client = docker.DockerClient(base_url=DOCKER_SOCKET)
             self.client.ping()
-            logger.info(f"Docker client initialized: {docker_host}")
+            logger.info(f"Docker client initialized: {DOCKER_SOCKET}")
         except DockerException as e:
             logger.error(f"Failed to initialize Docker client: {e}")
             raise

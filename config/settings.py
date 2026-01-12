@@ -51,11 +51,6 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", description="Logging level")
     log_file: str = Field(default="logs/bot.log", description="Log file path")
 
-    # Docker Settings
-    bot_docker_host: str = Field(
-        default="unix:///var/run/docker.sock", description="Docker host socket"
-    )
-
     # System Monitoring Paths
     host_proc_path: str = Field(default="/host/proc", description="Host /proc mount path")
     host_sys_path: str = Field(default="/host/sys", description="Host /sys mount path")
