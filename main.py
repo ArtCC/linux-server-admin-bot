@@ -15,6 +15,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+# =============================================================================
+# CRITICAL: Environment setup MUST happen before ANY other imports
+# =============================================================================
+import os
+
+# 1. Clear DOCKER_HOST (Portainer injects http+docker:// which breaks docker-py)
+_docker_host = os.environ.pop("DOCKER_HOST", None)
+if _docker_host:
+    print(f"[ENV] Cleared DOCKER_HOST={_docker_host}")
+
+# 2. Configure psutil to use host's /proc and /sys
+_host_proc = os.environ.get("HOST_PROC_PATH", "/host/proc")
+_host_sys = os.environ.get("HOST_SYS_PATH", "/host/sys")
+
+if os.path.exists(_host_proc):
+    os.environ["PSUTIL_PROCFS_PATH"] = _host_proc
+    print(f"[ENV] Set PSUTIL_PROCFS_PATH={_host_proc}")
+
+if os.path.exists(_host_sys):
+    os.environ["PSUTIL_SYSFS_PATH"] = _host_sys
+    print(f"[ENV] Set PSUTIL_SYSFS_PATH={_host_sys}")
+
+# =============================================================================
+# Now safe to import everything else
+# =============================================================================
 import asyncio
 import signal
 import sys

@@ -32,10 +32,6 @@ services:
       - RATE_LIMIT_CALLS=${RATE_LIMIT_CALLS:-10}
       - RATE_LIMIT_PERIOD=${RATE_LIMIT_PERIOD:-60}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
-      
-      # Host system monitoring paths
-      - HOST_PROC_PATH=/host/proc
-      - HOST_SYS_PATH=/host/sys
     
     # Volumes for monitoring host system
     volumes:

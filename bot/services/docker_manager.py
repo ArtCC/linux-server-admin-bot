@@ -1,12 +1,6 @@
 """
 Docker management service.
 """
-import os
-
-# IMPORTANT: Clear DOCKER_HOST before importing docker module
-# Portainer injects DOCKER_HOST=http+docker://... which is incompatible with docker-py
-_original_docker_host = os.environ.pop("DOCKER_HOST", None)
-
 from datetime import datetime
 from typing import Dict, List, Optional
 
@@ -19,9 +13,6 @@ from config import get_logger
 from config.constants import ContainerStatus
 
 logger = get_logger(__name__)
-
-if _original_docker_host:
-    logger.warning(f"Cleared incompatible DOCKER_HOST={_original_docker_host}")
 
 # Docker socket path - always use local socket
 DOCKER_SOCKET = "unix:///var/run/docker.sock"
