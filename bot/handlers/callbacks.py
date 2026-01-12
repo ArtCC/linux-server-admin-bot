@@ -145,11 +145,20 @@ class CallbackHandlers:
             f"Manage your containers\n"
             f"━━━━━━━━━━━━━━━━━━━━━━━━"
         )
-        await query.edit_message_text(
-            message,
-            parse_mode="MarkdownV2",
-            reply_markup=get_main_menu_keyboard()
-        )
+        # If coming from a photo message, delete and send new message
+        if query.message.photo:
+            await query.message.delete()
+            await query.message.chat.send_message(
+                message,
+                parse_mode="MarkdownV2",
+                reply_markup=get_main_menu_keyboard()
+            )
+        else:
+            await query.edit_message_text(
+                message,
+                parse_mode="MarkdownV2",
+                reply_markup=get_main_menu_keyboard()
+            )
 
     async def _show_docker_menu(self, query) -> None:
         """Show the Docker submenu."""
@@ -192,7 +201,7 @@ class CallbackHandlers:
         message = format_cpu_metrics(cpu)
         
         # Generate chart
-        chart_buf = chart_generator.generate_cpu_chart(cpu)
+        chart_buf = chart_generator.generate_cpu_chart(cpu.percent, cpu.per_cpu)
         
         # Send new message with photo (can't edit to photo)
         await query.message.delete()
@@ -210,7 +219,9 @@ class CallbackHandlers:
         message = format_memory_metrics(memory)
         
         # Generate chart
-        chart_buf = chart_generator.generate_memory_chart(memory)
+        chart_buf = chart_generator.generate_memory_chart(
+            memory.total_gb, memory.used_gb, memory.available_gb, memory.percent
+        )
         
         await query.message.delete()
         await context.bot.send_photo(
