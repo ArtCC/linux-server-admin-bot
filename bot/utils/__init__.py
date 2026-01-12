@@ -20,10 +20,7 @@ from bot.utils.formatters import (
 )
 from bot.utils.keyboards import (
     get_back_to_main_keyboard,
-    get_confirm_reboot_keyboard,
-    get_confirm_shutdown_keyboard,
     get_main_menu_keyboard,
-    get_power_menu_keyboard,
 )
 
 __all__ = [
@@ -49,7 +46,4 @@ __all__ = [
     # Keyboards
     "get_main_menu_keyboard",
     "get_back_to_main_keyboard",
-    "get_power_menu_keyboard",
-    "get_confirm_reboot_keyboard",
-    "get_confirm_shutdown_keyboard",
 ]

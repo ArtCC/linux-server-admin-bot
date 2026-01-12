@@ -49,10 +49,6 @@ EMOJI = {
     "process": "⚙️",
     "settings": "⚙️",
     "refresh": "🔄",
-    "power": "⚡",
-    "reboot": "🔄",
-    "shutdown": "🔴",
-    "danger": "⚠️",
 }
 
 # Command descriptions for bot menu
@@ -66,8 +62,6 @@ COMMANDS = {
     "/top": "Procesos top por uso de CPU",
     "/alerts": "Ver configuración de alertas",
     "/network": "Información de red",
-    "/reboot": "Reiniciar el servidor (requiere confirmación)",
-    "/shutdown": "Apagar el servidor (requiere confirmación)",
 }
 
 # System metrics refresh rates (seconds)

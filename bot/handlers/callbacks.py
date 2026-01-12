@@ -1,8 +1,6 @@
 """
 Callback query handlers for inline keyboard buttons.
 """
-import subprocess
-
 from telegram import Update
 from telegram.ext import ContextTypes
 
@@ -16,10 +14,7 @@ from bot.utils import (
     format_system_status,
     format_top_processes,
     get_back_to_main_keyboard,
-    get_confirm_reboot_keyboard,
-    get_confirm_shutdown_keyboard,
     get_main_menu_keyboard,
-    get_power_menu_keyboard,
 )
 from config import EMOJI, get_logger, settings
 
@@ -67,8 +62,6 @@ class CallbackHandlers:
             # Menu navigation
             if data == "menu_main":
                 await self._show_main_menu(query)
-            elif data == "menu_power":
-                await self._show_power_menu(query)
 
             # System commands
             elif data == "cmd_status":
@@ -87,16 +80,6 @@ class CallbackHandlers:
                 await self._handle_alerts(query)
             elif data == "cmd_help":
                 await self._handle_help(query)
-
-            # Power control commands
-            elif data == "cmd_reboot":
-                await self._handle_reboot_request(query)
-            elif data == "cmd_shutdown":
-                await self._handle_shutdown_request(query)
-            elif data == "confirm_reboot":
-                await self._handle_confirm_reboot(query)
-            elif data == "confirm_shutdown":
-                await self._handle_confirm_shutdown(query)
 
             else:
                 await query.edit_message_text(f"Unknown action: {data}")
@@ -282,10 +265,6 @@ class CallbackHandlers:
         message += "*🔔 Alerts*\n"
         message += "`/alerts` \\- Alert configuration\n\n"
         
-        message += "*⚡ Power Control*\n"
-        message += "`/reboot` \\- Reboot server\n"
-        message += "`/shutdown` \\- Shutdown server\n\n"
-        
         message += "_Use the menu buttons for easier navigation\\!_"
 
         await query.edit_message_text(
@@ -293,148 +272,3 @@ class CallbackHandlers:
             parse_mode="MarkdownV2",
             reply_markup=get_back_to_main_keyboard()
         )
-
-    async def _show_power_menu(self, query) -> None:
-        """Show the power control menu."""
-        message = (
-            f"{EMOJI['power']} *Power Control*\n\n"
-            f"⚠️ *Warning:* These actions will affect the server\\!\n\n"
-            f"━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            f"{EMOJI['reboot']} *Reboot* \\- Restart the server\n"
-            f"{EMOJI['shutdown']} *Shutdown* \\- Power off the server\n"
-            f"━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-            f"_Select an option carefully\\._"
-        )
-        
-        if query.message.photo:
-            await query.message.delete()
-            await query.message.chat.send_message(
-                message,
-                parse_mode="MarkdownV2",
-                reply_markup=get_power_menu_keyboard()
-            )
-        else:
-            await query.edit_message_text(
-                message,
-                parse_mode="MarkdownV2",
-                reply_markup=get_power_menu_keyboard()
-            )
-
-    async def _handle_reboot_request(self, query) -> None:
-        """Handle reboot request - show confirmation."""
-        message = (
-            f"{EMOJI['danger']} *REBOOT CONFIRMATION*\n\n"
-            f"You are about to *REBOOT* the server\\.\n\n"
-            f"⚠️ This will:\n"
-            f"• Disconnect all active sessions\n"
-            f"• Stop all running services\n"
-            f"• Restart the operating system\n\n"
-            f"_Are you absolutely sure\\?_"
-        )
-        
-        await query.edit_message_text(
-            message,
-            parse_mode="MarkdownV2",
-            reply_markup=get_confirm_reboot_keyboard()
-        )
-
-    async def _handle_shutdown_request(self, query) -> None:
-        """Handle shutdown request - show confirmation."""
-        message = (
-            f"{EMOJI['danger']} *SHUTDOWN CONFIRMATION*\n\n"
-            f"You are about to *SHUTDOWN* the server\\.\n\n"
-            f"⚠️ This will:\n"
-            f"• Disconnect all active sessions\n"
-            f"• Stop all running services\n"
-            f"• Power off the server completely\n"
-            f"• Require physical access to restart\\!\n\n"
-            f"_Are you absolutely sure\\?_"
-        )
-        
-        await query.edit_message_text(
-            message,
-            parse_mode="MarkdownV2",
-            reply_markup=get_confirm_shutdown_keyboard()
-        )
-
-    async def _handle_confirm_reboot(self, query) -> None:
-        """Execute server reboot."""
-        user = query.from_user
-        logger.warning(f"SERVER REBOOT initiated by user {user.id} ({user.username})")
-        
-        await query.edit_message_text(
-            f"{EMOJI['reboot']} *Rebooting server\\.\\.\\.*\n\n"
-            f"The server will restart now\\.\n"
-            f"Bot will be back online shortly\\.",
-            parse_mode="MarkdownV2"
-        )
-        
-        try:
-            # Execute reboot command on host using nsenter
-            # nsenter -t 1 enters the namespace of PID 1 (init/systemd on host)
-            result = subprocess.run(
-                ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "--", "reboot"],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            if result.returncode != 0:
-                logger.error(f"Reboot command failed: {result.stderr}")
-                await query.edit_message_text(
-                    f"{EMOJI['error']} *Reboot Failed*\n\n"
-                    f"Error: {escape_markdown(result.stderr or 'Unknown error')}",
-                    parse_mode="MarkdownV2",
-                    reply_markup=get_power_menu_keyboard()
-                )
-        except subprocess.TimeoutExpired:
-            # Timeout is expected if reboot starts immediately
-            logger.info("Reboot command timed out - this is expected if reboot started")
-        except Exception as e:
-            logger.error(f"Failed to execute reboot: {e}")
-            await query.edit_message_text(
-                f"{EMOJI['error']} *Reboot Failed*\n\n"
-                f"Error: {escape_markdown(str(e))}",
-                parse_mode="MarkdownV2",
-                reply_markup=get_power_menu_keyboard()
-            )
-
-    async def _handle_confirm_shutdown(self, query) -> None:
-        """Execute server shutdown."""
-        user = query.from_user
-        logger.warning(f"SERVER SHUTDOWN initiated by user {user.id} ({user.username})")
-        
-        await query.edit_message_text(
-            f"{EMOJI['shutdown']} *Shutting down server\\.\\.\\.*\n\n"
-            f"The server will power off now\\.\n"
-            f"Physical access required to restart\\.",
-            parse_mode="MarkdownV2"
-        )
-        
-        try:
-            # Execute shutdown command on host using nsenter
-            # nsenter -t 1 enters the namespace of PID 1 (init/systemd on host)
-            result = subprocess.run(
-                ["nsenter", "-t", "1", "-m", "-u", "-i", "-n", "--", "poweroff"],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            if result.returncode != 0:
-                logger.error(f"Shutdown command failed: {result.stderr}")
-                await query.edit_message_text(
-                    f"{EMOJI['error']} *Shutdown Failed*\n\n"
-                    f"Error: {escape_markdown(result.stderr or 'Unknown error')}",
-                    parse_mode="MarkdownV2",
-                    reply_markup=get_power_menu_keyboard()
-                )
-        except subprocess.TimeoutExpired:
-            # Timeout is expected if shutdown starts immediately
-            logger.info("Shutdown command timed out - this is expected if shutdown started")
-        except Exception as e:
-            logger.error(f"Failed to execute shutdown: {e}")
-            await query.edit_message_text(
-                f"{EMOJI['error']} *Shutdown Failed*\n\n"
-                f"Error: {escape_markdown(str(e))}",
-                parse_mode="MarkdownV2",
-                reply_markup=get_power_menu_keyboard()
-            )

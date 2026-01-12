@@ -37,12 +37,6 @@ Telegram bot for monitoring Ubuntu servers. Monitor system resources and receive
 - Rate limiting per user
 - Comprehensive logging
 
-### ⚡ Power Control
-- **Reboot**: Restart server with confirmation dialog
-- **Shutdown**: Power off server with safety confirmation
-- Requires explicit user confirmation before execution
-- Actions logged with user identification
-
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -102,7 +96,6 @@ The bot features a **beautiful interactive menu** with inline keyboard buttons f
 
 - **Main Menu**: Access all features with a single tap
 - **System Monitoring**: CPU, Memory, Disk, Network, Processes
-- **Power Control**: Reboot and Shutdown with safety confirmations
 - **Quick Navigation**: Back buttons and menu shortcuts
 
 Just type `/start` to see the interactive menu!
@@ -123,10 +116,6 @@ Just type `/start` to see the interactive menu!
 
 #### Alerts
 - `/alerts` - View alert configuration and active alerts
-
-#### Power Control
-- `/reboot` - Reboot server (requires confirmation)
-- `/shutdown` - Shutdown server (requires confirmation)
 
 ## 🏗️ Architecture
 
@@ -192,25 +181,9 @@ The bot requires access to host system resources:
 
 ```yaml
 volumes:
-  - /proc:/host/proc:ro # System metrics
-  - /sys:/host/sys:ro   # System information
+  - /proc:/host/proc:ro  # System metrics
+  - /sys:/host/sys:ro    # System information
 ```
-
-### Power Control (Reboot/Shutdown)
-
-For the power control features to work, the container needs special privileges:
-
-```yaml
-privileged: true # Required for nsenter
-pid: host        # Access to host PID namespace
-```
-
-⚠️ **Security Note**: These options give the container elevated access to the host. This is required because the bot needs to execute `shutdown` commands on the host system, not inside the container. The bot uses `nsenter` to enter the host's namespace and execute power commands.
-
-**How it works:**
-- The container runs with access to the host's PID namespace
-- When reboot/shutdown is triggered, `nsenter -t 1` enters PID 1's namespace (init/systemd)
-- The `shutdown` command is then executed on the host
 
 ## 🎨 Bot Avatar
 

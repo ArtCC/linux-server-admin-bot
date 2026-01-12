@@ -44,11 +44,10 @@ services:
     
     # Use host network for better system monitoring
     network_mode: host
-    
-    # Required for power control (reboot/shutdown)
-    # This allows the container to execute commands on the host
-    privileged: true
-    pid: host
+
+    # Security options
+    security_opt:
+      - no-new-privileges:true
     
     # Resource limits (adjust as needed)
     deploy:

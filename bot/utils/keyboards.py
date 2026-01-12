@@ -30,9 +30,6 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(f"{EMOJI['alert']} Alerts", callback_data="cmd_alerts"),
             InlineKeyboardButton(f"{EMOJI['help']} Help", callback_data="cmd_help"),
         ],
-        [
-            InlineKeyboardButton(f"{EMOJI['power']} Power Control", callback_data="menu_power"),
-        ],
     ]
     return InlineKeyboardMarkup(keyboard)
 
@@ -46,68 +43,5 @@ def get_back_to_main_keyboard() -> InlineKeyboardMarkup:
                 callback_data="menu_main"
             )
         ]
-    ]
-    return InlineKeyboardMarkup(keyboard)
-
-
-def get_power_menu_keyboard() -> InlineKeyboardMarkup:
-    """Get the power control menu keyboard."""
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                f"{EMOJI['reboot']} Reboot Server",
-                callback_data="cmd_reboot"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                f"{EMOJI['shutdown']} Shutdown Server",
-                callback_data="cmd_shutdown"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                f"{EMOJI['back']} Back to Menu",
-                callback_data="menu_main"
-            )
-        ],
-    ]
-    return InlineKeyboardMarkup(keyboard)
-
-
-def get_confirm_reboot_keyboard() -> InlineKeyboardMarkup:
-    """Get confirmation keyboard for reboot."""
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                f"{EMOJI['danger']} YES, REBOOT NOW",
-                callback_data="confirm_reboot"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                f"{EMOJI['cross']} Cancel",
-                callback_data="menu_power"
-            )
-        ],
-    ]
-    return InlineKeyboardMarkup(keyboard)
-
-
-def get_confirm_shutdown_keyboard() -> InlineKeyboardMarkup:
-    """Get confirmation keyboard for shutdown."""
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                f"{EMOJI['danger']} YES, SHUTDOWN NOW",
-                callback_data="confirm_shutdown"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                f"{EMOJI['cross']} Cancel",
-                callback_data="menu_power"
-            )
-        ],
     ]
     return InlineKeyboardMarkup(keyboard)
