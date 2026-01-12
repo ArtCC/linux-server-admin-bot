@@ -55,7 +55,6 @@ dmypy.json
 
 # Charts cache
 charts/
-*.png
 !docs/assets/*.png
 
 # Database (if added later)
