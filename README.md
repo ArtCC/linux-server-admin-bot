@@ -162,18 +162,18 @@ linux-server-admin-bot/
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `TELEGRAM_BOT_TOKEN` | Telegram Bot API token | Required |
-| `TELEGRAM_ALLOWED_USER_IDS` | Comma-separated user IDs | Required |
-| `CPU_ALERT_THRESHOLD` | CPU usage alert threshold (%) | 80 |
-| `MEMORY_ALERT_THRESHOLD` | Memory usage alert threshold (%) | 80 |
-| `DISK_ALERT_THRESHOLD` | Disk usage alert threshold (%) | 90 |
-| `ALERT_CHECK_INTERVAL` | Alert check interval (seconds) | 300 |
-| `ALERT_COOLDOWN` | Alert cooldown period (seconds) | 600 |
-| `RATE_LIMIT_CALLS` | Max calls per period | 10 |
-| `RATE_LIMIT_PERIOD` | Rate limit period (seconds) | 60 |
-| `LOG_LEVEL` | Logging level | INFO |
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `TELEGRAM_BOT_TOKEN` | Telegram Bot API token | ✅ Yes | - |
+| `TELEGRAM_ALLOWED_USER_IDS` | Comma-separated user IDs | ✅ Yes | - |
+| `CPU_ALERT_THRESHOLD` | CPU usage alert threshold (%) | ❌ No | 80 |
+| `MEMORY_ALERT_THRESHOLD` | Memory usage alert threshold (%) | ❌ No | 80 |
+| `DISK_ALERT_THRESHOLD` | Disk usage alert threshold (%) | ❌ No | 90 |
+| `ALERT_CHECK_INTERVAL` | Alert check interval (seconds) | ❌ No | 300 |
+| `ALERT_COOLDOWN` | Alert cooldown period (seconds) | ❌ No | 600 |
+| `RATE_LIMIT_CALLS` | Max calls per period | ❌ No | 10 |
+| `RATE_LIMIT_PERIOD` | Rate limit period (seconds) | ❌ No | 60 |
+| `LOG_LEVEL` | Logging level | ❌ No | INFO |
 
 ### Docker Volumes
 

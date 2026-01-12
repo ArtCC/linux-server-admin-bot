@@ -14,9 +14,25 @@ services:
     container_name: linux-server-admin-bot
     restart: unless-stopped
     
-    # Environment variables from .env file
-    env_file:
-      - .env
+    # Alternative: Load from .env file (uncomment and comment 'environment' section below)
+    # env_file:
+    #   - .env
+    
+    # Environment variables - can be set in Portainer or .env file
+    environment:
+      # Required variables
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_ALLOWED_USER_IDS=${TELEGRAM_ALLOWED_USER_IDS}
+      
+      # Optional variables (with default values)
+      - CPU_ALERT_THRESHOLD=${CPU_ALERT_THRESHOLD:-80}
+      - MEMORY_ALERT_THRESHOLD=${MEMORY_ALERT_THRESHOLD:-80}
+      - DISK_ALERT_THRESHOLD=${DISK_ALERT_THRESHOLD:-90}
+      - ALERT_CHECK_INTERVAL=${ALERT_CHECK_INTERVAL:-300}
+      - ALERT_COOLDOWN=${ALERT_COOLDOWN:-600}
+      - RATE_LIMIT_CALLS=${RATE_LIMIT_CALLS:-10}
+      - RATE_LIMIT_PERIOD=${RATE_LIMIT_PERIOD:-60}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
     
     # Volumes for monitoring host system
     volumes:
