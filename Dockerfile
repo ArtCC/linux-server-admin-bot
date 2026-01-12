@@ -36,15 +36,15 @@ COPY bot/ ./bot/
 COPY config/ ./config/
 COPY main.py .
 
-# Create logs directory
-RUN mkdir -p logs
-
 # Create non-root user for security
 RUN useradd -m -u 1000 botuser && \
     chown -R botuser:botuser /app
 
 # Switch to non-root user
 USER botuser
+
+# Create logs directory with correct permissions
+RUN mkdir -p logs
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \

@@ -78,17 +78,24 @@ MEMORY_ALERT_THRESHOLD=80
 DISK_ALERT_THRESHOLD=90
 ```
 
-3. **Build and run with Docker Compose**
+3. **Create logs directory with correct permissions**
+```bash
+mkdir -p logs
+sudo chown -R 1000:1000 logs
+sudo chmod -R 775 logs
+```
+
+4. **Build and run with Docker Compose**
 ```bash
 docker-compose up -d
 ```
 
-4. **Check logs**
+5. **Check logs**
 ```bash
 docker-compose logs -f
 ```
 
-5. **Start chatting with your bot on Telegram!**
+6. **Start chatting with your bot on Telegram!**
 
 ## 📖 Usage
 
