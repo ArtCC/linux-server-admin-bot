@@ -1,6 +1,8 @@
 """
 System monitoring command handlers.
 """
+import subprocess
+
 from telegram import Update
 from telegram.ext import ContextTypes
 
@@ -13,6 +15,8 @@ from bot.utils import (
     format_memory_metrics,
     format_system_status,
     format_top_processes,
+    get_confirm_reboot_keyboard,
+    get_confirm_shutdown_keyboard,
     standard_handler,
 )
 from config import EMOJI, get_logger, settings
@@ -204,3 +208,54 @@ class SystemHandlers:
         except Exception as e:
             logger.error(f"Error in network_command: {e}")
             await update.message.reply_text(f"❌ Error getting network information: {str(e)}")
+
+    @standard_handler
+    async def reboot_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """
+        Handle /reboot command - show reboot confirmation.
+
+        Args:
+            update: Telegram update
+            context: Bot context
+        """
+        message = (
+            f"{EMOJI['danger']} *REBOOT CONFIRMATION*\n\n"
+            f"You are about to *REBOOT* the server\\.\n\n"
+            f"⚠️ This will:\n"
+            f"• Disconnect all active sessions\n"
+            f"• Stop all running services\n"
+            f"• Restart the operating system\n\n"
+            f"_Are you absolutely sure\\?_"
+        )
+        
+        await update.message.reply_text(
+            message,
+            parse_mode="MarkdownV2",
+            reply_markup=get_confirm_reboot_keyboard()
+        )
+
+    @standard_handler
+    async def shutdown_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """
+        Handle /shutdown command - show shutdown confirmation.
+
+        Args:
+            update: Telegram update
+            context: Bot context
+        """
+        message = (
+            f"{EMOJI['danger']} *SHUTDOWN CONFIRMATION*\n\n"
+            f"You are about to *SHUTDOWN* the server\\.\n\n"
+            f"⚠️ This will:\n"
+            f"• Disconnect all active sessions\n"
+            f"• Stop all running services\n"
+            f"• Power off the server completely\n"
+            f"• Require physical access to restart\\!\n\n"
+            f"_Are you absolutely sure\\?_"
+        )
+        
+        await update.message.reply_text(
+            message,
+            parse_mode="MarkdownV2",
+            reply_markup=get_confirm_shutdown_keyboard()
+        )

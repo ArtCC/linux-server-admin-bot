@@ -126,6 +126,10 @@ class BotApplication:
         self.app.add_handler(CommandHandler("top", self.system_handlers.top_command))
         self.app.add_handler(CommandHandler("network", self.system_handlers.network_command))
 
+        # Power control commands
+        self.app.add_handler(CommandHandler("reboot", self.system_handlers.reboot_command))
+        self.app.add_handler(CommandHandler("shutdown", self.system_handlers.shutdown_command))
+
         # Callback query handler for inline keyboard buttons
         self.app.add_handler(CallbackQueryHandler(self.callback_handlers.handle_callback))
         logger.info("Callback query handler registered")
@@ -165,6 +169,8 @@ class BotApplication:
             BotCommand("network", "🌐 Estadísticas de red"),
             BotCommand("top", "📈 Procesos top"),
             BotCommand("alerts", "🔔 Configuración de alertas"),
+            BotCommand("reboot", "🔄 Reiniciar servidor"),
+            BotCommand("shutdown", "🔴 Apagar servidor"),
             BotCommand("help", "❓ Ayuda"),
         ]
         

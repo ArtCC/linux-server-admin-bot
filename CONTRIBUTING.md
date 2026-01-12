@@ -153,7 +153,7 @@ docs/            # Additional documentation
 
 **Examples:**
 ```
-feat(docker): add container health check command
+feat(power): add server reboot command
 fix(alerts): prevent duplicate alert notifications
 docs(readme): update installation instructions
 ```

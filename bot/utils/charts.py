@@ -141,46 +141,7 @@ class ChartGenerator:
         plt.tight_layout()
         return self._fig_to_bytes(fig)
 
-    def generate_docker_stats_chart(
-        self,
-        containers: Dict[str, Dict[str, float]],
-    ) -> io.BytesIO:
-        """
-        Generate Docker container resource usage chart.
-
-        Args:
-            containers: Dict mapping container names to their stats
-
-        Returns:
-            BytesIO buffer containing PNG image
-        """
-        if not containers:
-            return self._create_empty_chart("No containers running")
-
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=self.figsize, dpi=self.dpi)
-        
-        names = list(containers.keys())
-        cpu_values = [containers[name]["cpu"] for name in names]
-        mem_values = [containers[name]["memory"] for name in names]
-        
-        # CPU usage
-        colors_cpu = [CHART_COLORS["danger"] if v > 80 else CHART_COLORS["warning"] if v > 60 else CHART_COLORS["cpu"] for v in cpu_values]
-        ax1.barh(names, cpu_values, color=colors_cpu)
-        ax1.set_xlabel("CPU Usage (%)")
-        ax1.set_title("Container CPU Usage")
-        ax1.set_xlim(0, max(max(cpu_values) * 1.1, 100))
-        
-        # Memory usage
-        colors_mem = [CHART_COLORS["danger"] if v > 80 else CHART_COLORS["warning"] if v > 60 else CHART_COLORS["memory"] for v in mem_values]
-        ax2.barh(names, mem_values, color=colors_mem)
-        ax2.set_xlabel("Memory Usage (%)")
-        ax2.set_title("Container Memory Usage")
-        ax2.set_xlim(0, max(max(mem_values) * 1.1, 100))
-        
-        plt.tight_layout()
-        return self._fig_to_bytes(fig)
-
-    def generate_process_chart(
+    def generate_process_chart
         self,
         processes: List[Dict[str, any]],
         top_n: int = 10,

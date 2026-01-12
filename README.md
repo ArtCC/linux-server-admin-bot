@@ -37,6 +37,12 @@ Telegram bot for monitoring Ubuntu servers. Monitor system resources and receive
 - Rate limiting per user
 - Comprehensive logging
 
+### ⚡ Power Control
+- **Reboot**: Restart server with confirmation dialog
+- **Shutdown**: Power off server with safety confirmation
+- Requires explicit user confirmation before execution
+- Actions logged with user identification
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -96,6 +102,7 @@ The bot features a **beautiful interactive menu** with inline keyboard buttons f
 
 - **Main Menu**: Access all features with a single tap
 - **System Monitoring**: CPU, Memory, Disk, Network, Processes
+- **Power Control**: Reboot and Shutdown with safety confirmations
 - **Quick Navigation**: Back buttons and menu shortcuts
 
 Just type `/start` to see the interactive menu!
@@ -116,6 +123,10 @@ Just type `/start` to see the interactive menu!
 
 #### Alerts
 - `/alerts` - View alert configuration and active alerts
+
+#### Power Control
+- `/reboot` - Reboot server (requires confirmation)
+- `/shutdown` - Shutdown server (requires confirmation)
 
 ## 🏗️ Architecture
 

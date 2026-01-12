@@ -1,5 +1,5 @@
 """Config package initialization."""
-from config.constants import COMMANDS, EMOJI, AlertType, ChartType, ContainerStatus
+from config.constants import COMMANDS, EMOJI, AlertType, ChartType
 from config.logger import get_logger, setup_logging
 from config.settings import settings
 
@@ -11,5 +11,4 @@ __all__ = [
     "EMOJI",
     "AlertType",
     "ChartType",
-    "ContainerStatus",
 ]
