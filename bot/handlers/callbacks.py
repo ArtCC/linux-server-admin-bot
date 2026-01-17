@@ -190,7 +190,9 @@ class CallbackHandlers:
             )
             return
 
-        message = f"*{EMOJI['network']} Network Interfaces*\n\n"
+        message = "━━━━━━━━━━━━━━━━━━━━━━\n"
+        message += f"{EMOJI['network']} *NETWORK INTERFACES*\n"
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
 
         for net in networks:
             if net.interface == "lo":
@@ -199,9 +201,9 @@ class CallbackHandlers:
             interface_name = escape_markdown(net.interface)
             message += (
                 f"*{interface_name}*\n"
-                f"└ RX: {escape_markdown(f'{net.bytes_recv_mb:.2f}')} MB\n"
-                f"└ TX: {escape_markdown(f'{net.bytes_sent_mb:.2f}')} MB\n"
-                f"└ Packets: {net.packets_recv} / {net.packets_sent}\n\n"
+                f"  ↓ RX: {escape_markdown(f'{net.bytes_recv_mb:.2f}')} MB\n"
+                f"  ↑ TX: {escape_markdown(f'{net.bytes_sent_mb:.2f}')} MB\n"
+                f"  📦 Packets: {net.packets_recv} / {net.packets_sent}\n\n"
             )
 
         await query.edit_message_text(
@@ -234,19 +236,19 @@ class CallbackHandlers:
         """Handle alerts callback."""
         active_alerts = self.alert_manager.get_active_alerts()
         
-        message = (
-            f"*{EMOJI['alert']} Alert Configuration*\n\n"
-            f"━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            f"{EMOJI['cpu']} CPU Threshold: *{settings.cpu_alert_threshold}%*\n"
-            f"{EMOJI['memory']} Memory Threshold: *{settings.memory_alert_threshold}%*\n"
-            f"{EMOJI['disk']} Disk Threshold: *{settings.disk_alert_threshold}%*\n"
-            f"━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-        )
+        message = "━━━━━━━━━━━━━━━━━━━━━━\n"
+        message += f"{EMOJI['alert']} *ALERT CONFIGURATION*\n"
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        message += f"*Thresholds*\n"
+        message += f"  {EMOJI['cpu']} CPU: *{settings.cpu_alert_threshold}%*\n"
+        message += f"  {EMOJI['memory']} Memory: *{settings.memory_alert_threshold}%*\n"
+        message += f"  {EMOJI['disk']} Disk: *{settings.disk_alert_threshold}%*\n\n"
+        message += "────────────────────\n\n"
         
         if active_alerts:
             message += f"*Active Alerts:* {len(active_alerts)}\n"
             for alert in active_alerts[:5]:
-                message += f"⚠️ {escape_markdown(alert.message)}\n"
+                message += f"🔴 {escape_markdown(alert.message)}\n"
         else:
             message += f"{EMOJI['success']} No active alerts"
 
@@ -304,7 +306,9 @@ class CallbackHandlers:
             )
             return
 
-        message = f"*{EMOJI['temp']} System Temperature*\n\n"
+        message = "━━━━━━━━━━━━━━━━━━━━━━\n"
+        message += f"{EMOJI['temp']} *SYSTEM TEMPERATURE*\n"
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
 
         for sensor_type, sensors in temps.items():
             sensor_name = escape_markdown(sensor_type.replace("_", " ").title())
@@ -317,11 +321,11 @@ class CallbackHandlers:
                 critical = sensor.critical
 
                 if critical and current >= critical:
-                    status = EMOJI["error"]
+                    status = "🔴"
                 elif high and current >= high:
-                    status = EMOJI["warning"]
+                    status = "🟡"
                 else:
-                    status = EMOJI["success"]
+                    status = "🟢"
 
                 temp_str = escape_markdown(f"{current:.1f}°C")
                 message += f"  {status} {label}: {temp_str}"
@@ -350,8 +354,9 @@ class CallbackHandlers:
 
         boot_time_str = info["boot_time"].strftime("%d/%m/%Y %H:%M:%S")
         
-        message = f"*{EMOJI['clock']} System Uptime*\n\n"
-        message += f"*Uptime:*\n"
+        message = "━━━━━━━━━━━━━━━━━━━━━━\n"
+        message += f"{EMOJI['clock']} *SYSTEM UPTIME*\n"
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
         
         uptime_parts = []
         if info["days"] > 0:
@@ -363,10 +368,12 @@ class CallbackHandlers:
         uptime_str = escape_markdown(", ".join(uptime_parts))
         boot_str = escape_markdown(boot_time_str)
         
-        message += f"└ {uptime_str}\n\n"
-        message += f"*Last boot:*\n└ {boot_str}\n\n"
+        message += f"⏱️ *Uptime:* {uptime_str}\n\n"
+        message += f"🔄 *Last boot:* {boot_str}\n\n"
         
-        message += f"*Logged in users:* {info['users_count']}\n"
+        message += "────────────────────\n\n"
+        
+        message += f"👥 *Logged in users:* {info['users_count']}\n"
         
         if info["users"]:
             for user in info["users"][:5]:
@@ -400,13 +407,15 @@ class CallbackHandlers:
             )
             return
 
-        message = f"*{EMOJI['services']} Services Status*\n\n"
+        message = "━━━━━━━━━━━━━━━━━━━━━━\n"
+        message += f"{EMOJI['services']} *SERVICES STATUS*\n"
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
 
         running = [s for s in services if s["is_running"]]
         stopped = [s for s in services if not s["is_running"]]
 
         if running:
-            message += f"*{EMOJI['success']} Active:*\n"
+            message += f"🟢 *Active \\({len(running)}\\):*\n"
             for svc in running:
                 name = escape_markdown(svc["name"])
                 sub = escape_markdown(svc["sub_state"])
@@ -414,7 +423,7 @@ class CallbackHandlers:
             message += "\n"
 
         if stopped:
-            message += f"*{EMOJI['error']} Inactive:*\n"
+            message += f"🔴 *Inactive \\({len(stopped)}\\):*\n"
             for svc in stopped:
                 name = escape_markdown(svc["name"])
                 status = escape_markdown(svc["status"])

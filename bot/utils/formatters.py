@@ -82,18 +82,28 @@ def format_system_status(status: SystemStatus) -> str:
     Returns:
         Formatted message in MarkdownV2
     """
-    cpu_emoji = EMOJI["fire"] if status.cpu.percent > 80 else EMOJI["success"]
-    mem_emoji = EMOJI["fire"] if status.memory.percent > 80 else EMOJI["success"]
-    disk_emoji = EMOJI["fire"] if status.disk.percent > 80 else EMOJI["success"]
+    cpu_indicator = _get_status_indicator(status.cpu.percent)
+    mem_indicator = _get_status_indicator(status.memory.percent)
+    disk_indicator = _get_status_indicator(status.disk.percent, 75, 90)
+    
+    cpu_bar = _create_progress_bar(status.cpu.percent, 100, 10)
+    mem_bar = _create_progress_bar(status.memory.percent, 100, 10)
+    disk_bar = _create_progress_bar(status.disk.percent, 100, 10)
+    
+    header = _format_header(f"{EMOJI['chart']} *SYSTEM STATUS*")
     
     message = (
-        f"*{EMOJI['info']} System Status*\n\n"
-        f"{EMOJI['cpu']} *CPU Usage:* {cpu_emoji} {escape_markdown(f'{status.cpu.percent:.1f}%')}\n"
+        f"{escape_markdown(header)}\n\n"
+        f"{EMOJI['cpu']} *CPU*\n"
+        f"{escape_markdown(cpu_bar)} {escape_markdown(f'{status.cpu.percent:.1f}%')} {cpu_indicator}\n"
         f"└ Cores: {escape_markdown(str(status.cpu.count))}\n\n"
-        f"{EMOJI['memory']} *Memory:* {mem_emoji} {escape_markdown(f'{status.memory.percent:.1f}%')}\n"
+        f"{EMOJI['memory']} *Memory*\n"
+        f"{escape_markdown(mem_bar)} {escape_markdown(f'{status.memory.percent:.1f}%')} {mem_indicator}\n"
         f"└ {escape_markdown(f'{status.memory.used_gb:.1f}GB')} / {escape_markdown(f'{status.memory.total_gb:.1f}GB')}\n\n"
-        f"{EMOJI['disk']} *Disk:* {disk_emoji} {escape_markdown(f'{status.disk.percent:.1f}%')}\n"
+        f"{EMOJI['disk']} *Disk*\n"
+        f"{escape_markdown(disk_bar)} {escape_markdown(f'{status.disk.percent:.1f}%')} {disk_indicator}\n"
         f"└ {escape_markdown(f'{status.disk.used_gb:.1f}GB')} / {escape_markdown(f'{status.disk.total_gb:.1f}GB')}\n\n"
+        f"{escape_markdown(_format_section_divider())}\n"
         f"{EMOJI['clock']} *Uptime:* {escape_markdown(status.uptime_formatted)}\n"
     )
     
@@ -110,13 +120,15 @@ def format_cpu_metrics(metrics: CPUMetrics) -> str:
     Returns:
         Formatted message in MarkdownV2
     """
-    status_emoji = EMOJI["fire"] if metrics.percent > 80 else EMOJI["warning"] if metrics.percent > 60 else EMOJI["success"]
+    status_indicator = _get_status_indicator(metrics.percent)
+    overall_bar = _create_progress_bar(metrics.percent, 100, 12)
     
-    message = (
-        f"*{EMOJI['cpu']} CPU Information*\n\n"
-        f"*Overall Usage:* {status_emoji} {escape_markdown(f'{metrics.percent:.1f}%')}\n"
-        f"*CPU Cores:* {escape_markdown(str(metrics.count))}\n"
-    )
+    header = _format_header(f"{EMOJI['cpu']} *CPU INFORMATION*")
+    
+    message = f"{escape_markdown(header)}\n\n"
+    message += f"*Overall Usage*\n"
+    message += f"{escape_markdown(overall_bar)} {escape_markdown(f'{metrics.percent:.1f}%')} {status_indicator}\n\n"
+    message += f"*Cores:* {escape_markdown(str(metrics.count))}\n"
     
     if metrics.frequency_current:
         message += f"*Frequency:* {escape_markdown(f'{metrics.frequency_current:.0f} MHz')}\n"
@@ -125,10 +137,13 @@ def format_cpu_metrics(metrics: CPUMetrics) -> str:
         load_str = f"{metrics.load_avg[0]:.2f}, {metrics.load_avg[1]:.2f}, {metrics.load_avg[2]:.2f}"
         message += f"*Load Average:* {escape_markdown(load_str)}\n"
     
-    message += "\n*Per\\-CPU Usage:*\n"
+    message += f"\n{escape_markdown(_format_section_divider())}\n"
+    message += "*Per\\-Core Usage*\n\n"
+    
     for i, usage in enumerate(metrics.per_cpu):
-        bar = _create_progress_bar(usage, 100, length=10)
-        message += f"CPU{i}: {escape_markdown(bar)} {escape_markdown(f'{usage:.1f}%')}\n"
+        bar = _create_progress_bar(usage, 100, length=8)
+        indicator = _get_status_indicator(usage)
+        message += f"CPU{i}: {escape_markdown(bar)} {escape_markdown(f'{usage:.1f}%')} {indicator}\n"
     
     return message
 
@@ -143,24 +158,25 @@ def format_memory_metrics(metrics: MemoryMetrics) -> str:
     Returns:
         Formatted message in MarkdownV2
     """
-    status_emoji = EMOJI["fire"] if metrics.percent > 80 else EMOJI["warning"] if metrics.percent > 60 else EMOJI["success"]
-    bar = _create_progress_bar(metrics.percent, 100, length=15)
+    status_indicator = _get_status_indicator(metrics.percent)
+    bar = _create_progress_bar(metrics.percent, 100, length=12)
     
-    message = (
-        f"*{EMOJI['memory']} Memory Information*\n\n"
-        f"*Usage:* {status_emoji} {escape_markdown(f'{metrics.percent:.1f}%')}\n"
-        f"{escape_markdown(bar)}\n\n"
-        f"*Total:* {escape_markdown(f'{metrics.total_gb:.2f} GB')}\n"
-        f"*Used:* {escape_markdown(f'{metrics.used_gb:.2f} GB')}\n"
-        f"*Available:* {escape_markdown(f'{metrics.available_gb:.2f} GB')}\n"
-    )
+    header = _format_header(f"{EMOJI['memory']} *MEMORY INFORMATION*")
+    
+    message = f"{escape_markdown(header)}\n\n"
+    message += f"*Usage*\n"
+    message += f"{escape_markdown(bar)} {escape_markdown(f'{metrics.percent:.1f}%')} {status_indicator}\n\n"
+    message += f"*Total:* {escape_markdown(f'{metrics.total_gb:.2f} GB')}\n"
+    message += f"*Used:* {escape_markdown(f'{metrics.used_gb:.2f} GB')}\n"
+    message += f"*Available:* {escape_markdown(f'{metrics.available_gb:.2f} GB')}\n"
     
     if metrics.swap_total > 0:
-        message += (
-            f"\n*Swap Usage:* {escape_markdown(f'{metrics.swap_percent:.1f}%')}\n"
-            f"└ {escape_markdown(f'{metrics.swap_used / (1024**3):.2f} GB')} / "
-            f"{escape_markdown(f'{metrics.swap_total / (1024**3):.2f} GB')}\n"
-        )
+        swap_indicator = _get_status_indicator(metrics.swap_percent)
+        swap_bar = _create_progress_bar(metrics.swap_percent, 100, length=12)
+        message += f"\n{escape_markdown(_format_section_divider())}\n"
+        message += f"*Swap*\n"
+        message += f"{escape_markdown(swap_bar)} {escape_markdown(f'{metrics.swap_percent:.1f}%')} {swap_indicator}\n"
+        message += f"└ {escape_markdown(f'{metrics.swap_used / (1024**3):.2f} GB')} / {escape_markdown(f'{metrics.swap_total / (1024**3):.2f} GB')}\n"
     
     return message
 
@@ -175,18 +191,18 @@ def format_disk_metrics(metrics: DiskMetrics) -> str:
     Returns:
         Formatted message in MarkdownV2
     """
-    status_emoji = EMOJI["fire"] if metrics.percent > 90 else EMOJI["warning"] if metrics.percent > 75 else EMOJI["success"]
-    bar = _create_progress_bar(metrics.percent, 100, length=15)
+    status_indicator = _get_status_indicator(metrics.percent, 75, 90)
+    bar = _create_progress_bar(metrics.percent, 100, length=12)
     
-    message = (
-        f"*{EMOJI['disk']} Disk Information*\n\n"
-        f"*Mount Point:* {escape_markdown(metrics.mount_point)}\n"
-        f"*Usage:* {status_emoji} {escape_markdown(f'{metrics.percent:.1f}%')}\n"
-        f"{escape_markdown(bar)}\n\n"
-        f"*Total:* {escape_markdown(f'{metrics.total_gb:.2f} GB')}\n"
-        f"*Used:* {escape_markdown(f'{metrics.used_gb:.2f} GB')}\n"
-        f"*Free:* {escape_markdown(f'{metrics.free_gb:.2f} GB')}\n"
-    )
+    header = _format_header(f"{EMOJI['disk']} *DISK INFORMATION*")
+    
+    message = f"{escape_markdown(header)}\n\n"
+    message += f"*Mount Point:* {escape_markdown(metrics.mount_point)}\n\n"
+    message += f"*Usage*\n"
+    message += f"{escape_markdown(bar)} {escape_markdown(f'{metrics.percent:.1f}%')} {status_indicator}\n\n"
+    message += f"*Total:* {escape_markdown(f'{metrics.total_gb:.2f} GB')}\n"
+    message += f"*Used:* {escape_markdown(f'{metrics.used_gb:.2f} GB')}\n"
+    message += f"*Free:* {escape_markdown(f'{metrics.free_gb:.2f} GB')}\n"
     
     return message
 
@@ -201,13 +217,16 @@ def format_top_processes(processes: List[ProcessInfo]) -> str:
     Returns:
         Formatted message in MarkdownV2
     """
-    message = f"*{EMOJI['cpu']} Top Processes by CPU*\n\n"
+    header = _format_header(f"{EMOJI['process']} *TOP PROCESSES*")
+    
+    message = f"{escape_markdown(header)}\n\n"
     
     for i, proc in enumerate(processes, 1):
+        cpu_indicator = _get_status_indicator(proc.cpu_percent)
         message += (
-            f"{i}\\. *{escape_markdown(proc.name[:30])}*\n"
-            f"   CPU: {escape_markdown(f'{proc.cpu_percent:.1f}%')} \\| "
-            f"MEM: {escape_markdown(f'{proc.memory_mb:.0f}MB')} \\| "
+            f"*{i}\\. {escape_markdown(proc.name[:25])}*\n"
+            f"   {cpu_indicator} CPU: {escape_markdown(f'{proc.cpu_percent:.1f}%')} │ "
+            f"MEM: {escape_markdown(f'{proc.memory_mb:.0f}MB')} │ "
             f"PID: {escape_markdown(str(proc.pid))}\n"
         )
     
@@ -228,4 +247,42 @@ def _create_progress_bar(value: float, max_value: float, length: int = 10) -> st
     """
     filled = int((value / max_value) * length)
     bar = "█" * filled + "░" * (length - filled)
-    return bar
+    return f"[{bar}]"
+
+
+def _get_status_indicator(percent: float, warning_threshold: int = 60, critical_threshold: int = 80) -> str:
+    """
+    Get a colored status indicator based on percentage.
+
+    Args:
+        percent: Current percentage value
+        warning_threshold: Threshold for warning (yellow)
+        critical_threshold: Threshold for critical (red)
+
+    Returns:
+        Status emoji (🟢, 🟡, or 🔴)
+    """
+    if percent >= critical_threshold:
+        return "🔴"
+    elif percent >= warning_threshold:
+        return "🟡"
+    else:
+        return "🟢"
+
+
+def _format_header(title: str) -> str:
+    """
+    Format a header with decorative lines.
+
+    Args:
+        title: Header title text
+
+    Returns:
+        Formatted header string
+    """
+    return f"━━━━━━━━━━━━━━━━━━━━━━\n{title}\n━━━━━━━━━━━━━━━━━━━━━━"
+
+
+def _format_section_divider() -> str:
+    """Get a section divider line."""
+    return "────────────────────"

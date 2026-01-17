@@ -183,7 +183,9 @@ class SystemHandlers:
                 await update.message.reply_text("No network interfaces found.")
                 return
 
-            message = f"*{EMOJI['network']} Network Interfaces*\n\n"
+            message = "━━━━━━━━━━━━━━━━━━━━━━\n"
+            message += f"{EMOJI['network']} *NETWORK INTERFACES*\n"
+            message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
 
             for net in networks:
                 # Skip loopback
@@ -193,10 +195,10 @@ class SystemHandlers:
                 interface_name = escape_markdown(net.interface)
                 message += (
                     f"*{interface_name}*\n"
-                    f"└ RX: {escape_markdown(f'{net.bytes_recv_mb:.2f}')} MB\n"
-                    f"└ TX: {escape_markdown(f'{net.bytes_sent_mb:.2f}')} MB\n"
-                    f"└ Packets: {net.packets_recv} / {net.packets_sent}\n"
-                    f"└ Errors: {net.errors_in} / {net.errors_out}\n\n"
+                    f"  ↓ RX: {escape_markdown(f'{net.bytes_recv_mb:.2f}')} MB\n"
+                    f"  ↑ TX: {escape_markdown(f'{net.bytes_sent_mb:.2f}')} MB\n"
+                    f"  📦 Packets: {net.packets_recv} / {net.packets_sent}\n"
+                    f"  ⚠️ Errors: {net.errors_in} / {net.errors_out}\n\n"
                 )
 
             await update.message.reply_text(message, parse_mode="MarkdownV2")
@@ -223,12 +225,14 @@ class SystemHandlers:
                     f"_This may happen if:_\n"
                     f"• Hardware has no sensors\n"
                     f"• Drivers are not installed\n"
-                    f"• Container has no access to /sys_",
+                    f"• Container has no access to /sys",
                     parse_mode="MarkdownV2",
                 )
                 return
 
-            message = f"*{EMOJI['temp']} System Temperature*\n\n"
+            message = "━━━━━━━━━━━━━━━━━━━━━━\n"
+            message += f"{EMOJI['temp']} *SYSTEM TEMPERATURE*\n"
+            message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
 
             for sensor_type, sensors in temps.items():
                 sensor_name = escape_markdown(sensor_type.replace("_", " ").title())
@@ -240,13 +244,13 @@ class SystemHandlers:
                     high = sensor.high
                     critical = sensor.critical
 
-                    # Determine status emoji based on temperature
+                    # Determine status indicator based on temperature
                     if critical and current >= critical:
-                        status = EMOJI["error"]
+                        status = "🔴"
                     elif high and current >= high:
-                        status = EMOJI["warning"]
+                        status = "🟡"
                     else:
-                        status = EMOJI["success"]
+                        status = "🟢"
 
                     temp_str = escape_markdown(f"{current:.1f}°C")
                     message += f"  {status} {label}: {temp_str}"
@@ -283,8 +287,9 @@ class SystemHandlers:
 
             boot_time_str = info["boot_time"].strftime("%d/%m/%Y %H:%M:%S")
             
-            message = f"*{EMOJI['clock']} System Uptime*\n\n"
-            message += f"*Uptime:*\n"
+            message = "━━━━━━━━━━━━━━━━━━━━━━\n"
+            message += f"{EMOJI['clock']} *SYSTEM UPTIME*\n"
+            message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
             
             uptime_parts = []
             if info["days"] > 0:
@@ -296,17 +301,18 @@ class SystemHandlers:
             uptime_str = escape_markdown(", ".join(uptime_parts))
             boot_str = escape_markdown(boot_time_str)
             
-            message += f"└ {uptime_str}\n\n"
-            message += f"*Last boot:*\n└ {boot_str}\n\n"
+            message += f"⏱️ *Uptime:* {uptime_str}\n\n"
+            message += f"🔄 *Last boot:* {boot_str}\n\n"
+            
+            message += "────────────────────\n\n"
             
             # Users info
-            message += f"*Logged in users:* {info['users_count']}\n"
+            message += f"👥 *Logged in users:* {info['users_count']}\n"
             
             if info["users"]:
                 for user in info["users"][:5]:  # Limit to 5 users
                     user_name = escape_markdown(user["name"])
                     terminal = escape_markdown(user["terminal"])
-                    host = escape_markdown(user["host"])
                     since = escape_markdown(user["started"].strftime("%H:%M"))
                     message += f"  • {user_name} \\({terminal}\\) since {since}\n"
             
@@ -339,14 +345,16 @@ class SystemHandlers:
                 )
                 return
 
-            message = f"*{EMOJI['services']} Services Status*\n\n"
+            message = "━━━━━━━━━━━━━━━━━━━━━━\n"
+            message += f"{EMOJI['services']} *SERVICES STATUS*\n"
+            message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
 
             # Sort: running first, then stopped
             running = [s for s in services if s["is_running"]]
             stopped = [s for s in services if not s["is_running"]]
 
             if running:
-                message += f"*{EMOJI['success']} Active:*\n"
+                message += f"🟢 *Active \\({len(running)}\\):*\n"
                 for svc in running:
                     name = escape_markdown(svc["name"])
                     sub = escape_markdown(svc["sub_state"])
@@ -354,7 +362,7 @@ class SystemHandlers:
                 message += "\n"
 
             if stopped:
-                message += f"*{EMOJI['error']} Inactive:*\n"
+                message += f"🔴 *Inactive \\({len(stopped)}\\):*\n"
                 for svc in stopped:
                     name = escape_markdown(svc["name"])
                     status = escape_markdown(svc["status"])
