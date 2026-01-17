@@ -25,6 +25,11 @@ def get_main_menu_keyboard() -> InlineKeyboardMarkup:
         ],
         [
             InlineKeyboardButton(f"{EMOJI['process']} Processes", callback_data="cmd_top"),
+            InlineKeyboardButton(f"{EMOJI['temp']} Temperature", callback_data="cmd_temp"),
+        ],
+        [
+            InlineKeyboardButton(f"{EMOJI['clock']} Uptime", callback_data="cmd_uptime"),
+            InlineKeyboardButton(f"{EMOJI['services']} Services", callback_data="cmd_services"),
         ],
         [
             InlineKeyboardButton(f"{EMOJI['alert']} Alerts", callback_data="cmd_alerts"),

@@ -76,6 +76,12 @@ class CallbackHandlers:
                 await self._handle_network(query)
             elif data == "cmd_top":
                 await self._handle_top(query, context)
+            elif data == "cmd_temp":
+                await self._handle_temp(query)
+            elif data == "cmd_uptime":
+                await self._handle_uptime(query)
+            elif data == "cmd_services":
+                await self._handle_services(query)
             elif data == "cmd_alerts":
                 await self._handle_alerts(query)
             elif data == "cmd_help":
@@ -260,12 +266,159 @@ class CallbackHandlers:
         message += "`/memory` \\- Memory usage\n"
         message += "`/disk` \\- Disk usage\n"
         message += "`/network` \\- Network stats\n"
-        message += "`/top` \\- Top processes\n\n"
+        message += "`/top` \\- Top processes\n"
+        message += "`/temp` \\- System temperature\n"
+        message += "`/uptime` \\- System uptime\n"
+        message += "`/services` \\- Services status\n\n"
         
         message += "*🔔 Alerts*\n"
         message += "`/alerts` \\- Alert configuration\n\n"
         
+        message += "*ℹ️ Info*\n"
+        message += "`/author` \\- Bot author\n\n"
+        
         message += "_Use the menu buttons for easier navigation\\!_"
+
+        await query.edit_message_text(
+            message,
+            parse_mode="MarkdownV2",
+            reply_markup=get_back_to_main_keyboard()
+        )
+
+    async def _handle_temp(self, query) -> None:
+        """Handle temperature callback."""
+        temps = self.system_monitor.get_temperature()
+
+        if not temps:
+            message = (
+                f"{EMOJI['warning']} No temperature sensors found\\.\n\n"
+                f"_This may happen if:_\n"
+                f"• Hardware has no sensors\n"
+                f"• Drivers are not installed\n"
+                f"• Container has no access to /sys"
+            )
+            await query.edit_message_text(
+                message,
+                parse_mode="MarkdownV2",
+                reply_markup=get_back_to_main_keyboard()
+            )
+            return
+
+        message = f"*{EMOJI['temp']} System Temperature*\n\n"
+
+        for sensor_type, sensors in temps.items():
+            sensor_name = escape_markdown(sensor_type.replace("_", " ").title())
+            message += f"*{sensor_name}:*\n"
+
+            for sensor in sensors:
+                label = escape_markdown(sensor.label or "Sensor")
+                current = sensor.current
+                high = sensor.high
+                critical = sensor.critical
+
+                if critical and current >= critical:
+                    status = EMOJI["error"]
+                elif high and current >= high:
+                    status = EMOJI["warning"]
+                else:
+                    status = EMOJI["success"]
+
+                temp_str = escape_markdown(f"{current:.1f}°C")
+                message += f"  {status} {label}: {temp_str}"
+
+                if high or critical:
+                    limits = []
+                    if high:
+                        limits.append(f"max: {high:.0f}°C")
+                    if critical:
+                        limits.append(f"crit: {critical:.0f}°C")
+                    limits_str = escape_markdown(f" ({', '.join(limits)})")
+                    message += limits_str
+                message += "\n"
+
+            message += "\n"
+
+        await query.edit_message_text(
+            message,
+            parse_mode="MarkdownV2",
+            reply_markup=get_back_to_main_keyboard()
+        )
+
+    async def _handle_uptime(self, query) -> None:
+        """Handle uptime callback."""
+        info = self.system_monitor.get_uptime_info()
+
+        boot_time_str = info["boot_time"].strftime("%d/%m/%Y %H:%M:%S")
+        
+        message = f"*{EMOJI['clock']} System Uptime*\n\n"
+        message += f"*Uptime:*\n"
+        
+        uptime_parts = []
+        if info["days"] > 0:
+            uptime_parts.append(f"{info['days']} day{'s' if info['days'] != 1 else ''}")
+        if info["hours"] > 0:
+            uptime_parts.append(f"{info['hours']} hour{'s' if info['hours'] != 1 else ''}")
+        uptime_parts.append(f"{info['minutes']} minute{'s' if info['minutes'] != 1 else ''}")
+        
+        uptime_str = escape_markdown(", ".join(uptime_parts))
+        boot_str = escape_markdown(boot_time_str)
+        
+        message += f"└ {uptime_str}\n\n"
+        message += f"*Last boot:*\n└ {boot_str}\n\n"
+        
+        message += f"*Logged in users:* {info['users_count']}\n"
+        
+        if info["users"]:
+            for user in info["users"][:5]:
+                user_name = escape_markdown(user["name"])
+                terminal = escape_markdown(user["terminal"])
+                since = escape_markdown(user["started"].strftime("%H:%M"))
+                message += f"  • {user_name} \\({terminal}\\) since {since}\n"
+        
+        await query.edit_message_text(
+            message,
+            parse_mode="MarkdownV2",
+            reply_markup=get_back_to_main_keyboard()
+        )
+
+    async def _handle_services(self, query) -> None:
+        """Handle services callback."""
+        services = self.system_monitor.get_services_status()
+
+        if not services:
+            message = (
+                f"{EMOJI['warning']} No systemd services found\\.\n\n"
+                f"_This may happen if:_\n"
+                f"• System doesn't use systemd\n"
+                f"• No common services installed\n"
+                f"• systemctl is not available"
+            )
+            await query.edit_message_text(
+                message,
+                parse_mode="MarkdownV2",
+                reply_markup=get_back_to_main_keyboard()
+            )
+            return
+
+        message = f"*{EMOJI['services']} Services Status*\n\n"
+
+        running = [s for s in services if s["is_running"]]
+        stopped = [s for s in services if not s["is_running"]]
+
+        if running:
+            message += f"*{EMOJI['success']} Active:*\n"
+            for svc in running:
+                name = escape_markdown(svc["name"])
+                sub = escape_markdown(svc["sub_state"])
+                message += f"  • {name} \\({sub}\\)\n"
+            message += "\n"
+
+        if stopped:
+            message += f"*{EMOJI['error']} Inactive:*\n"
+            for svc in stopped:
+                name = escape_markdown(svc["name"])
+                status = escape_markdown(svc["status"])
+                message += f"  • {name} \\({status}\\)\n"
 
         await query.edit_message_text(
             message,

@@ -334,7 +334,7 @@ class SystemHandlers:
                     f"_This may happen if:_\n"
                     f"• System doesn't use systemd\n"
                     f"• No common services installed\n"
-                    f"• systemctl is not available_",
+                    f"• systemctl is not available",
                     parse_mode="MarkdownV2",
                 )
                 return
