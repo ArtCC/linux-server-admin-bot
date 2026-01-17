@@ -45,9 +45,18 @@ services:
     # Use host network for better system monitoring
     network_mode: host
 
+    # Share host PID namespace to see host processes
+    # Required for /top command to show host processes instead of container processes
+    pid: host
+
     # Security options
     security_opt:
       - no-new-privileges:true
+    
+    # Drop dangerous capabilities - container can READ processes but NOT kill them
+    cap_drop:
+      - KILL        # Cannot send signals to host processes
+      - SYS_PTRACE  # Cannot debug/trace host processes
     
     # Resource limits (adjust as needed)
     deploy:

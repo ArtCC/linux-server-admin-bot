@@ -36,6 +36,7 @@ Telegram bot for monitoring Ubuntu servers. Monitor system resources and receive
 - User whitelist authentication
 - Rate limiting per user
 - Comprehensive logging
+- Host PID namespace with restricted capabilities (read-only process access)
 
 ## 🚀 Quick Start
 
