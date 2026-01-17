@@ -114,9 +114,15 @@ Just type `/start` to see the interactive menu!
 - `/disk` - Disk space usage
 - `/top` - Top processes by CPU usage
 - `/network` - Network interface statistics
+- `/temp` - System temperature sensors
+- `/uptime` - System uptime and logged users
+- `/services` - Systemd services status
 
 #### Alerts
 - `/alerts` - View alert configuration and active alerts
+
+#### Info
+- `/author` - Bot author information
 
 ## 🏗️ Architecture
 

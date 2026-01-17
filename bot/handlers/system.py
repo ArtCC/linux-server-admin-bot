@@ -219,16 +219,16 @@ class SystemHandlers:
 
             if not temps:
                 await update.message.reply_text(
-                    f"{EMOJI['warning']} No se encontraron sensores de temperatura\\.\n\n"
-                    f"_Esto puede ocurrir si:_\n"
-                    f"• El hardware no tiene sensores\n"
-                    f"• Los drivers no están instalados\n"
-                    f"• El contenedor no tiene acceso a /sys_",
+                    f"{EMOJI['warning']} No temperature sensors found\\.\n\n"
+                    f"_This may happen if:_\n"
+                    f"• Hardware has no sensors\n"
+                    f"• Drivers are not installed\n"
+                    f"• Container has no access to /sys_",
                     parse_mode="MarkdownV2",
                 )
                 return
 
-            message = f"*{EMOJI['temp']} Temperatura del Sistema*\n\n"
+            message = f"*{EMOJI['temp']} System Temperature*\n\n"
 
             for sensor_type, sensors in temps.items():
                 sensor_name = escape_markdown(sensor_type.replace("_", " ").title())

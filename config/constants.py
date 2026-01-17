@@ -56,18 +56,18 @@ EMOJI = {
 
 # Command descriptions for bot menu
 COMMANDS = {
-    "/start": "Iniciar el bot y mostrar información de bienvenida",
-    "/help": "Mostrar ayuda y lista de comandos disponibles",
-    "/status": "Estado general del sistema (CPU, RAM, Disco)",
-    "/cpu": "Información detallada de CPU con gráfico",
-    "/memory": "Información detallada de memoria RAM",
-    "/disk": "Información de uso de disco",
-    "/top": "Procesos top por uso de CPU",
-    "/alerts": "Ver configuración de alertas",
-    "/network": "Información de red",
-    "/temp": "Temperatura de CPU y sistema",
-    "/uptime": "Tiempo de actividad del servidor",
-    "/services": "Estado de servicios systemd",
+    "/start": "Start bot and show welcome message",
+    "/help": "Show help and available commands",
+    "/status": "Overall system status (CPU, RAM, Disk)",
+    "/cpu": "Detailed CPU information with chart",
+    "/memory": "Detailed RAM memory information",
+    "/disk": "Disk usage information",
+    "/top": "Top processes by CPU usage",
+    "/alerts": "View alert configuration",
+    "/network": "Network information",
+    "/temp": "CPU and system temperature",
+    "/uptime": "Server uptime",
+    "/services": "Systemd services status",
     "/author": "Bot author information",
 }
 

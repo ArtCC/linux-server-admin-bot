@@ -161,19 +161,19 @@ class BotApplication:
     async def _set_bot_commands(self) -> None:
         """Set the bot commands menu visible in Telegram."""
         commands = [
-            BotCommand("start", "🚀 Menú principal"),
-            BotCommand("status", "📊 Estado del sistema"),
-            BotCommand("cpu", "🖥️ Información de CPU"),
-            BotCommand("memory", "💾 Uso de memoria"),
-            BotCommand("disk", "💿 Uso de disco"),
-            BotCommand("network", "🌐 Estadísticas de red"),
-            BotCommand("top", "📈 Procesos top"),
-            BotCommand("temp", "🌡️ Temperatura del sistema"),
-            BotCommand("uptime", "🕐 Tiempo de actividad"),
-            BotCommand("services", "🔧 Estado de servicios"),
-            BotCommand("alerts", "🔔 Configuración de alertas"),
+            BotCommand("start", "🚀 Main menu"),
+            BotCommand("status", "📊 System status"),
+            BotCommand("cpu", "🖥️ CPU information"),
+            BotCommand("memory", "💾 Memory usage"),
+            BotCommand("disk", "💿 Disk usage"),
+            BotCommand("network", "🌐 Network stats"),
+            BotCommand("top", "📈 Top processes"),
+            BotCommand("temp", "🌡️ System temperature"),
+            BotCommand("uptime", "🕐 System uptime"),
+            BotCommand("services", "🔧 Services status"),
+            BotCommand("alerts", "🔔 Alert configuration"),
             BotCommand("author", "👨‍💻 Bot author"),
-            BotCommand("help", "❓ Ayuda"),
+            BotCommand("help", "❓ Help"),
         ]
         
         await self.app.bot.set_my_commands(commands)

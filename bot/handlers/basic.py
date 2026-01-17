@@ -64,8 +64,9 @@ class BasicHandlers:
         
         # Group commands by category
         basic_cmds = ["/start", "/help", "/status"]
-        system_cmds = ["/cpu", "/memory", "/disk", "/top", "/network"]
+        system_cmds = ["/cpu", "/memory", "/disk", "/top", "/network", "/temp", "/uptime", "/services"]
         alert_cmds = ["/alerts"]
+        info_cmds = ["/author"]
         
         help_text += "*Basic Commands:*\n"
         for cmd in basic_cmds:
@@ -79,6 +80,11 @@ class BasicHandlers:
         
         help_text += "\n*Alerts:*\n"
         for cmd in alert_cmds:
+            if cmd in COMMANDS:
+                help_text += f"`{cmd}` \\- {escape_markdown(COMMANDS[cmd])}\n"
+        
+        help_text += "\n*Info:*\n"
+        for cmd in info_cmds:
             if cmd in COMMANDS:
                 help_text += f"`{cmd}` \\- {escape_markdown(COMMANDS[cmd])}\n"
         
