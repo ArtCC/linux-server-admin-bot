@@ -245,3 +245,119 @@ class SystemMonitor:
         except Exception as e:
             logger.warning(f"Temperature sensors not available: {e}")
             return None
+
+    def get_uptime_info(self) -> dict:
+        """
+        Get detailed uptime information.
+
+        Returns:
+            Dictionary with uptime details
+        """
+        try:
+            boot_time = datetime.fromtimestamp(psutil.boot_time())
+            uptime_seconds = (datetime.now() - boot_time).total_seconds()
+            
+            # Calculate uptime components
+            days = int(uptime_seconds // 86400)
+            hours = int((uptime_seconds % 86400) // 3600)
+            minutes = int((uptime_seconds % 3600) // 60)
+            
+            # Get logged in users count
+            users = psutil.users()
+            
+            return {
+                "boot_time": boot_time,
+                "uptime_seconds": uptime_seconds,
+                "days": days,
+                "hours": hours,
+                "minutes": minutes,
+                "users_count": len(users),
+                "users": [
+                    {
+                        "name": u.name,
+                        "terminal": u.terminal or "N/A",
+                        "host": u.host or "local",
+                        "started": datetime.fromtimestamp(u.started),
+                    }
+                    for u in users
+                ],
+            }
+        except Exception as e:
+            logger.error(f"Error getting uptime info: {e}")
+            raise
+
+    def get_services_status(self, services: Optional[List[str]] = None) -> List[dict]:
+        """
+        Get status of systemd services.
+
+        Args:
+            services: List of service names to check. If None, checks common services.
+
+        Returns:
+            List of service status dictionaries
+        """
+        import subprocess
+        
+        if services is None:
+            # Default list of common services to monitor
+            services = [
+                "docker",
+                "nginx",
+                "apache2",
+                "mysql",
+                "mariadb",
+                "postgresql",
+                "redis-server",
+                "ssh",
+                "cron",
+                "fail2ban",
+            ]
+        
+        results = []
+        
+        for service in services:
+            try:
+                # Check if service exists and get its status
+                result = subprocess.run(
+                    ["systemctl", "is-active", service],
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                )
+                status = result.stdout.strip()
+                
+                # Get more details if service exists
+                if status != "inactive" or result.returncode != 3:
+                    # Service exists, get more info
+                    detail_result = subprocess.run(
+                        ["systemctl", "show", service, "--property=ActiveState,SubState,LoadState"],
+                        capture_output=True,
+                        text=True,
+                        timeout=5,
+                    )
+                    
+                    props = {}
+                    for line in detail_result.stdout.strip().split("\n"):
+                        if "=" in line:
+                            key, value = line.split("=", 1)
+                            props[key] = value
+                    
+                    # Only add if service is loaded (exists)
+                    if props.get("LoadState") == "loaded":
+                        results.append({
+                            "name": service,
+                            "status": status,
+                            "active_state": props.get("ActiveState", "unknown"),
+                            "sub_state": props.get("SubState", "unknown"),
+                            "is_running": status == "active",
+                        })
+            except subprocess.TimeoutExpired:
+                logger.warning(f"Timeout checking service: {service}")
+            except FileNotFoundError:
+                # systemctl not available (non-systemd system)
+                logger.warning("systemctl not available")
+                break
+            except Exception as e:
+                logger.debug(f"Error checking service {service}: {e}")
+        
+        return results

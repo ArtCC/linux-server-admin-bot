@@ -117,6 +117,7 @@ class BotApplication:
         self.app.add_handler(CommandHandler("start", self.basic_handlers.start_command))
         self.app.add_handler(CommandHandler("help", self.basic_handlers.help_command))
         self.app.add_handler(CommandHandler("alerts", self.basic_handlers.alerts_command))
+        self.app.add_handler(CommandHandler("author", self.basic_handlers.author_command))
 
         # System monitoring commands
         self.app.add_handler(CommandHandler("status", self.system_handlers.status_command))
@@ -125,6 +126,9 @@ class BotApplication:
         self.app.add_handler(CommandHandler("disk", self.system_handlers.disk_command))
         self.app.add_handler(CommandHandler("top", self.system_handlers.top_command))
         self.app.add_handler(CommandHandler("network", self.system_handlers.network_command))
+        self.app.add_handler(CommandHandler("temp", self.system_handlers.temp_command))
+        self.app.add_handler(CommandHandler("uptime", self.system_handlers.uptime_command))
+        self.app.add_handler(CommandHandler("services", self.system_handlers.services_command))
 
         # Callback query handler for inline keyboard buttons
         self.app.add_handler(CallbackQueryHandler(self.callback_handlers.handle_callback))
@@ -164,7 +168,11 @@ class BotApplication:
             BotCommand("disk", "💿 Uso de disco"),
             BotCommand("network", "🌐 Estadísticas de red"),
             BotCommand("top", "📈 Procesos top"),
+            BotCommand("temp", "🌡️ Temperatura del sistema"),
+            BotCommand("uptime", "🕐 Tiempo de actividad"),
+            BotCommand("services", "🔧 Estado de servicios"),
             BotCommand("alerts", "🔔 Configuración de alertas"),
+            BotCommand("author", "👨‍💻 Bot author"),
             BotCommand("help", "❓ Ayuda"),
         ]
         

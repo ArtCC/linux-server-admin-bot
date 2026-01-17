@@ -121,3 +121,30 @@ class BasicHandlers:
         except Exception as e:
             logger.error(f"Error in alerts_command: {e}")
             await update.message.reply_text(f"❌ Error getting alerts: {str(e)}")
+
+    @standard_handler
+    async def author_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """
+        Handle /author command - show bot author information.
+
+        Args:
+            update: Telegram update
+            context: Bot context
+        """
+        message = (
+            "━━━━━━━━━━━━━━━━━━━━━━\n"
+            "👨‍💻 *AUTHOR*\n"
+            "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            "Arturo Carretero Calvo\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "💻 *GitHub:*\n"
+            "[github\\.com/ArtCC](https://github.com/ArtCC)\n\n"
+            "🚀 Check out my other projects\\!\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "✨ *Built with:*\n"
+            "GitHub Copilot \\(Claude Opus 4\\.5\\)\n\n"
+            "📄 *License:* Apache 2\\.0\n"
+            "━━━━━━━━━━━━━━━━━━━━━━"
+        )
+        
+        await update.message.reply_text(message, parse_mode="MarkdownV2")

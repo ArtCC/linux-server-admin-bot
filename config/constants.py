@@ -49,6 +49,9 @@ EMOJI = {
     "process": "⚙️",
     "settings": "⚙️",
     "refresh": "🔄",
+    "temp": "🌡️",
+    "services": "🔧",
+    "author": "👨‍💻",
 }
 
 # Command descriptions for bot menu
@@ -62,6 +65,10 @@ COMMANDS = {
     "/top": "Procesos top por uso de CPU",
     "/alerts": "Ver configuración de alertas",
     "/network": "Información de red",
+    "/temp": "Temperatura de CPU y sistema",
+    "/uptime": "Tiempo de actividad del servidor",
+    "/services": "Estado de servicios systemd",
+    "/author": "Bot author information",
 }
 
 # System metrics refresh rates (seconds)

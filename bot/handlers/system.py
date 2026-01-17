@@ -204,3 +204,164 @@ class SystemHandlers:
         except Exception as e:
             logger.error(f"Error in network_command: {e}")
             await update.message.reply_text(f"❌ Error getting network information: {str(e)}")
+
+    @standard_handler
+    async def temp_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """
+        Handle /temp command - show CPU/system temperatures.
+
+        Args:
+            update: Telegram update
+            context: Bot context
+        """
+        try:
+            temps = self.monitor.get_temperature()
+
+            if not temps:
+                await update.message.reply_text(
+                    f"{EMOJI['warning']} No se encontraron sensores de temperatura\\.\n\n"
+                    f"_Esto puede ocurrir si:_\n"
+                    f"• El hardware no tiene sensores\n"
+                    f"• Los drivers no están instalados\n"
+                    f"• El contenedor no tiene acceso a /sys_",
+                    parse_mode="MarkdownV2",
+                )
+                return
+
+            message = f"*{EMOJI['temp']} Temperatura del Sistema*\n\n"
+
+            for sensor_type, sensors in temps.items():
+                sensor_name = escape_markdown(sensor_type.replace("_", " ").title())
+                message += f"*{sensor_name}:*\n"
+
+                for sensor in sensors:
+                    label = escape_markdown(sensor.label or "Sensor")
+                    current = sensor.current
+                    high = sensor.high
+                    critical = sensor.critical
+
+                    # Determine status emoji based on temperature
+                    if critical and current >= critical:
+                        status = EMOJI["error"]
+                    elif high and current >= high:
+                        status = EMOJI["warning"]
+                    else:
+                        status = EMOJI["success"]
+
+                    temp_str = escape_markdown(f"{current:.1f}°C")
+                    message += f"  {status} {label}: {temp_str}"
+
+                    if high or critical:
+                        limits = []
+                        if high:
+                            limits.append(f"max: {high:.0f}°C")
+                        if critical:
+                            limits.append(f"crit: {critical:.0f}°C")
+                        limits_str = escape_markdown(f" ({', '.join(limits)})")
+                        message += limits_str
+                    message += "\n"
+
+                message += "\n"
+
+            await update.message.reply_text(message, parse_mode="MarkdownV2")
+
+        except Exception as e:
+            logger.error(f"Error in temp_command: {e}")
+            await update.message.reply_text(f"❌ Error getting temperature: {str(e)}")
+
+    @standard_handler
+    async def uptime_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """
+        Handle /uptime command - show system uptime and logged users.
+
+        Args:
+            update: Telegram update
+            context: Bot context
+        """
+        try:
+            info = self.monitor.get_uptime_info()
+
+            boot_time_str = info["boot_time"].strftime("%d/%m/%Y %H:%M:%S")
+            
+            message = f"*{EMOJI['clock']} System Uptime*\n\n"
+            message += f"*Uptime:*\n"
+            
+            uptime_parts = []
+            if info["days"] > 0:
+                uptime_parts.append(f"{info['days']} day{'s' if info['days'] != 1 else ''}")
+            if info["hours"] > 0:
+                uptime_parts.append(f"{info['hours']} hour{'s' if info['hours'] != 1 else ''}")
+            uptime_parts.append(f"{info['minutes']} minute{'s' if info['minutes'] != 1 else ''}")
+            
+            uptime_str = escape_markdown(", ".join(uptime_parts))
+            boot_str = escape_markdown(boot_time_str)
+            
+            message += f"└ {uptime_str}\n\n"
+            message += f"*Last boot:*\n└ {boot_str}\n\n"
+            
+            # Users info
+            message += f"*Logged in users:* {info['users_count']}\n"
+            
+            if info["users"]:
+                for user in info["users"][:5]:  # Limit to 5 users
+                    user_name = escape_markdown(user["name"])
+                    terminal = escape_markdown(user["terminal"])
+                    host = escape_markdown(user["host"])
+                    since = escape_markdown(user["started"].strftime("%H:%M"))
+                    message += f"  • {user_name} \\({terminal}\\) since {since}\n"
+            
+            await update.message.reply_text(message, parse_mode="MarkdownV2")
+
+        except Exception as e:
+            logger.error(f"Error in uptime_command: {e}")
+            await update.message.reply_text(f"❌ Error getting uptime: {str(e)}")
+
+    @standard_handler
+    async def services_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """
+        Handle /services command - show systemd services status.
+
+        Args:
+            update: Telegram update
+            context: Bot context
+        """
+        try:
+            services = self.monitor.get_services_status()
+
+            if not services:
+                await update.message.reply_text(
+                    f"{EMOJI['warning']} No systemd services found\\.\n\n"
+                    f"_This may happen if:_\n"
+                    f"• System doesn't use systemd\n"
+                    f"• No common services installed\n"
+                    f"• systemctl is not available_",
+                    parse_mode="MarkdownV2",
+                )
+                return
+
+            message = f"*{EMOJI['services']} Services Status*\n\n"
+
+            # Sort: running first, then stopped
+            running = [s for s in services if s["is_running"]]
+            stopped = [s for s in services if not s["is_running"]]
+
+            if running:
+                message += f"*{EMOJI['success']} Active:*\n"
+                for svc in running:
+                    name = escape_markdown(svc["name"])
+                    sub = escape_markdown(svc["sub_state"])
+                    message += f"  • {name} \\({sub}\\)\n"
+                message += "\n"
+
+            if stopped:
+                message += f"*{EMOJI['error']} Inactive:*\n"
+                for svc in stopped:
+                    name = escape_markdown(svc["name"])
+                    status = escape_markdown(svc["status"])
+                    message += f"  • {name} \\({status}\\)\n"
+
+            await update.message.reply_text(message, parse_mode="MarkdownV2")
+
+        except Exception as e:
+            logger.error(f"Error in services_command: {e}")
+            await update.message.reply_text(f"❌ Error getting services: {str(e)}")
