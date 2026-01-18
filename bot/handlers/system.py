@@ -183,9 +183,7 @@ class SystemHandlers:
                 await update.message.reply_text("No network interfaces found.")
                 return
 
-            message = "━━━━━━━━━━━━━━━━━━━━━━\n"
-            message += f"{EMOJI['network']} *NETWORK INTERFACES*\n"
-            message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            message = f"{EMOJI['network']} *NETWORK INTERFACES*\n\n"
 
             for net in networks:
                 # Skip loopback
@@ -230,9 +228,7 @@ class SystemHandlers:
                 )
                 return
 
-            message = "━━━━━━━━━━━━━━━━━━━━━━\n"
-            message += f"{EMOJI['temp']} *SYSTEM TEMPERATURE*\n"
-            message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            message = f"{EMOJI['temp']} *SYSTEM TEMPERATURE*\n\n"
 
             for sensor_type, sensors in temps.items():
                 sensor_name = escape_markdown(sensor_type.replace("_", " ").title())
@@ -287,9 +283,7 @@ class SystemHandlers:
 
             boot_time_str = info["boot_time"].strftime("%d/%m/%Y %H:%M:%S")
             
-            message = "━━━━━━━━━━━━━━━━━━━━━━\n"
-            message += f"{EMOJI['clock']} *SYSTEM UPTIME*\n"
-            message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            message = f"{EMOJI['clock']} *SYSTEM UPTIME*\n\n"
             
             uptime_parts = []
             if info["days"] > 0:
@@ -303,8 +297,6 @@ class SystemHandlers:
             
             message += f"⏱️ *Uptime:* {uptime_str}\n\n"
             message += f"🔄 *Last boot:* {boot_str}\n\n"
-            
-            message += "────────────────────\n\n"
             
             # Users info
             message += f"👥 *Logged in users:* {info['users_count']}\n"
@@ -345,9 +337,7 @@ class SystemHandlers:
                 )
                 return
 
-            message = "━━━━━━━━━━━━━━━━━━━━━━\n"
-            message += f"{EMOJI['services']} *SERVICES STATUS*\n"
-            message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            message = f"{EMOJI['services']} *SERVICES STATUS*\n\n"
 
             # Sort: running first, then stopped
             running = [s for s in services if s["is_running"]]

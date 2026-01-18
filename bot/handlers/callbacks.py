@@ -102,10 +102,8 @@ class CallbackHandlers:
         message = (
             f"{EMOJI['rocket']} *Linux Server Admin Bot*\n\n"
             f"Welcome\\! Select an option below:\n\n"
-            f"━━━━━━━━━━━━━━━━━━━━━━━━\n"
             f"{EMOJI['chart']} *System Monitoring*\n"
-            f"Monitor CPU, Memory, Disk, Network\n"
-            f"━━━━━━━━━━━━━━━━━━━━━━━━"
+            f"Monitor CPU, Memory, Disk, Network"
         )
         # If coming from a photo message, delete and send new message
         if query.message.photo:
@@ -190,9 +188,7 @@ class CallbackHandlers:
             )
             return
 
-        message = "━━━━━━━━━━━━━━━━━━━━━━\n"
-        message += f"{EMOJI['network']} *NETWORK INTERFACES*\n"
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        message = f"{EMOJI['network']} *NETWORK INTERFACES*\n\n"
 
         for net in networks:
             if net.interface == "lo":
@@ -236,14 +232,11 @@ class CallbackHandlers:
         """Handle alerts callback."""
         active_alerts = self.alert_manager.get_active_alerts()
         
-        message = "━━━━━━━━━━━━━━━━━━━━━━\n"
-        message += f"{EMOJI['alert']} *ALERT CONFIGURATION*\n"
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        message = f"{EMOJI['alert']} *ALERT CONFIGURATION*\n\n"
         message += f"*Thresholds*\n"
         message += f"  {EMOJI['cpu']} CPU: *{settings.cpu_alert_threshold}%*\n"
         message += f"  {EMOJI['memory']} Memory: *{settings.memory_alert_threshold}%*\n"
         message += f"  {EMOJI['disk']} Disk: *{settings.disk_alert_threshold}%*\n\n"
-        message += "────────────────────\n\n"
         
         if active_alerts:
             message += f"*Active Alerts:* {len(active_alerts)}\n"
@@ -306,9 +299,7 @@ class CallbackHandlers:
             )
             return
 
-        message = "━━━━━━━━━━━━━━━━━━━━━━\n"
-        message += f"{EMOJI['temp']} *SYSTEM TEMPERATURE*\n"
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        message = f"{EMOJI['temp']} *SYSTEM TEMPERATURE*\n\n"
 
         for sensor_type, sensors in temps.items():
             sensor_name = escape_markdown(sensor_type.replace("_", " ").title())
@@ -354,9 +345,7 @@ class CallbackHandlers:
 
         boot_time_str = info["boot_time"].strftime("%d/%m/%Y %H:%M:%S")
         
-        message = "━━━━━━━━━━━━━━━━━━━━━━\n"
-        message += f"{EMOJI['clock']} *SYSTEM UPTIME*\n"
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        message = f"{EMOJI['clock']} *SYSTEM UPTIME*\n\n"
         
         uptime_parts = []
         if info["days"] > 0:
@@ -370,8 +359,6 @@ class CallbackHandlers:
         
         message += f"⏱️ *Uptime:* {uptime_str}\n\n"
         message += f"🔄 *Last boot:* {boot_str}\n\n"
-        
-        message += "────────────────────\n\n"
         
         message += f"👥 *Logged in users:* {info['users_count']}\n"
         
@@ -407,9 +394,7 @@ class CallbackHandlers:
             )
             return
 
-        message = "━━━━━━━━━━━━━━━━━━━━━━\n"
-        message += f"{EMOJI['services']} *SERVICES STATUS*\n"
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        message = f"{EMOJI['services']} *SERVICES STATUS*\n\n"
 
         running = [s for s in services if s["is_running"]]
         stopped = [s for s in services if not s["is_running"]]

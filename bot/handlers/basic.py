@@ -37,11 +37,9 @@ class BasicHandlers:
         welcome_message = (
             f"{EMOJI['rocket']} *Linux Server Admin Bot*\n\n"
             f"Welcome, {escape_markdown(user.first_name)}\\!\n\n"
-            f"━━━━━━━━━━━━━━━━━━━━━━━━\n"
             f"{EMOJI['server']} Monitor your Ubuntu server\n"
             f"{EMOJI['chart']} View system metrics\n"
-            f"{EMOJI['warning']} Get real\\-time alerts\n"
-            f"━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"{EMOJI['warning']} Get real\\-time alerts\n\n"
             f"_Select an option below or use /help_"
         )
         
@@ -138,19 +136,14 @@ class BasicHandlers:
             context: Bot context
         """
         message = (
-            "━━━━━━━━━━━━━━━━━━━━━━\n"
-            "👨‍💻 *AUTHOR*\n"
-            "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            "👨‍💻 *AUTHOR*\n\n"
             "Arturo Carretero Calvo\n\n"
-            "━━━━━━━━━━━━━━━━━━━━\n\n"
             "💻 *GitHub:*\n"
             "[github\\.com/ArtCC](https://github.com/ArtCC)\n\n"
             "🚀 Check out my other projects\\!\n\n"
-            "━━━━━━━━━━━━━━━━━━━━\n\n"
             "✨ *Built with:*\n"
             "GitHub Copilot \\(Claude Opus 4\\.5\\)\n\n"
-            "📄 *License:* Apache 2\\.0\n"
-            "━━━━━━━━━━━━━━━━━━━━━━"
+            "📄 *License:* Apache 2\\.0"
         )
         
         await update.message.reply_text(message, parse_mode="MarkdownV2")
